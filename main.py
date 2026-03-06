@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import cast
 
 from policyradar.analyzer import apply_entity_rules
+from policyradar.common.validators import validate_article
 from policyradar.collector import collect_sources
 from policyradar.config_loader import load_category_config, load_settings
 from policyradar.raw_logger import RawLogger
@@ -43,8 +44,19 @@ def run(
 
     analyzed = apply_entity_rules(collected, category_cfg.entities)
 
+    # Validate articles for data quality
+    validated_articles = []
+    validation_errors = []
+    for article in analyzed:
+        is_valid, errors = validate_article(article)
+        if is_valid:
+            validated_articles.append(article)
+        else:
+            validation_errors.append(f"{article.link}: {', '.join(errors)}")
+
     storage = RadarStorage(settings.database_path)
-    storage.upsert_articles(analyzed)
+    storage.upsert_articles(validated_articles)
+    errors.extend(validation_errors)
     _ = storage.delete_older_than(keep_days)
 
     with SearchIndex(settings.search_db_path) as search_idx:
