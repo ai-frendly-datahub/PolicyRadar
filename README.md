@@ -1,85 +1,77 @@
-# PolicyRadar
+# PolicyRadar - 정책 정보 레이더
 
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-정책 변경, 약관 업데이트, 규제 동향을 자동 추적하여 소비자와 기업이 중요한 정책 변화를 놓치지 않도록 돕는 레이더 프로젝트입니다.
+정부 정책 관련 뉴스, 공고, 입찰 정보를 수집하고 정책 분야별 트렌드를 분석합니다.
 
 ## 프로젝트 목표
 
-- **정책 변경 감지**: 개인정보 정책, 이용약관, 규제 변경 등 주요 정책 뉴스를 일일 자동 수집
-- **약관 변경 추적**: 주요 플랫폼(Google, Apple, Meta 등)의 서비스 약관 변경 동향 모니터링
-- **변경 감지 자동화**: MCP `change_detect` 도구로 정책/약관 변경 신호를 자동으로 탐지·알림
-- **규제 동향 분석**: 독점 규제, 공정거래, 소비자 보호 관련 법률/규제 변화 추적
-- **AI 정책 도우미**: MCP 서버를 통해 AI 어시스턴트에서 정책 정보를 자연어로 검색
+- **데이터 수집**: 정책 뉴스 RSS 및 정부 공고
+- **엔티티 분석**: 정책 분야별 키워드 매칭 (경제, 교육, 환경, 복지 등)
+- **트렌드 리포트**: DuckDB 저장 + HTML 리포트로 {domain} 동향 시각화
+- **자동화**: GitHub Actions 일일 수집 + GitHub Pages 리포트 자동 배포
 
-## 기술적 우수성 (Phase 1)
+## 기술적 우수성
 
-Phase 1 개선사항을 통해 프로덕션급 안정성과 운영 효율성을 확보했습니다:
-
-- **안정성 99.9%**: HTTP 자동 재시도(지수 백오프 3회), DB 트랜잭션 에러 처리로 일시적 장애에도 데이터 수집 보장
-- **실시간 관찰성**: 구조화된 JSON 로깅으로 파이프라인 상태를 실시간 모니터링하고 문제 발생 시 즉시 디버깅
-- **품질 보증**: N/A% 테스트 커버리지(57개 테스트)로 코드 변경 시 회귀 버그 사전 차단
-- **고성능 처리**: 배치 처리 최적화로 대량 데이터 수집 시 10배 속도 향상 (단일 트랜잭션 bulk insert)
-- **운영 자동화**: Email/Webhook 알림으로 수집 완료, 에러 발생 등 이벤트를 즉시 통보하여 무인 운영 가능
-## 주요 기능
-
-1. **RSS 자동 수집**: TechCrunch, The Verge, EFF Updates 등에서 정책 관련 기사 수집
-2. **엔티티 매칭**: 개인정보 정책, 약관 변경, 규제/법률, 플랫폼 정책, 소비자 권리 5개 카테고리
-3. **DuckDB 저장**: UPSERT 시맨틱 기반 기사 저장
-4. **JSONL 원본 보존**: `data/raw/YYYY-MM-DD/{source}.jsonl`
-5. **SQLite FTS5 검색**: 전문검색으로 정책 관련 빠른 검색
-6. **자연어 쿼리**: "최근 2주 개인정보 관련" 같은 자연어 검색
-7. **HTML 리포트**: 정책 카테고리별 변경 사항이 포함된 자동 리포트
-8. **MCP 서버**: search, recent_updates, sql, top_trends, change_detect
+- **안정성**: HTTP 자동 재시도(지수 백오프), DB 트랜잭션 에러 처리
+- **관찰성**: 구조화된 JSON 로깅으로 파이프라인 상태 실시간 모니터링
+- **품질 보증**: 단위 테스트로 코드 변경 시 회귀 버그 사전 차단
+- **고성능**: 배치 처리 최적화로 대량 데이터 수집 시 성능 향상
+- **운영 자동화**: Email/Webhook 알림으로 무인 운영 가능
 
 ## 빠른 시작
 
-```bash
-pip install -r requirements.txt
-python main.py --category policy --recent-days 7
-```
+1. 가상환경을 만들고 의존성을 설치합니다.
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-- 리포트: `reports/policy_report.html`
+2. 실행:
+   ```bash
+   python main.py --category policy --recent-days 7
+   # 리포트: reports/policy_report.html
+   ```
+
+   주요 옵션: `--per-source-limit 20`, `--recent-days 5`, `--keep-days 60`, `--timeout 20`.
+
+## GitHub Actions & GitHub Pages
+
+- 워크플로: `.github/workflows/radar-crawler.yml`
+  - 스케줄: 매일 00:00 UTC (KST 09:00), 수동 실행도 지원.
+  - 환경 변수 `RADAR_CATEGORY`를 프로젝트에 맞게 수정하세요.
+  - 리포트 배포 디렉터리: `reports` → `gh-pages` 브랜치로 배포.
+  - DuckDB 경로: `data/radar_data.duckdb` (Pages에 올라가지 않음). 아티팩트로 7일 보관.
+
+- 설정 방법:
+  1) 저장소 Settings → Pages에서 `gh-pages` 브랜치를 선택해 활성화
+  2) Actions 권한을 기본값으로 두거나 외부 PR에서도 실행되도록 설정
+  3) 워크플로 파일의 `RADAR_CATEGORY`를 원하는 YAML 이름으로 변경
+
+## 동작 방식
+
+- **수집**: 카테고리 YAML에 정의된 소스를 수집합니다. 실행 시 DuckDB에 적재하고 보존 기간(`keep_days`)을 적용합니다.
+- **분석**: 엔티티별 키워드 매칭. 매칭된 키워드를 리포트에 칩으로 표시합니다.
+- **리포트**: `reports/<category>_report.html`을 생성하며, 최근 N일(기본 7일) 기사와 엔티티 히트 카운트, 수집 오류를 표시합니다.
+
+## 기본 경로
+
 - DB: `data/radar_data.duckdb`
-- Raw JSONL: `data/raw/YYYY-MM-DD/*.jsonl`
+- 리포트 출력: `reports/`
 
-## 프로젝트 구조
+## 디렉터리 구성
 
 ```
 PolicyRadar/
-├── policyradar/
-│   ├── collector.py       # RSS 수집
-│   ├── analyzer.py        # 엔티티 키워드 매칭
-│   ├── storage.py         # DuckDB 스토리지
-│   ├── reporter.py        # HTML 리포트
-│   ├── raw_logger.py      # JSONL 원본 기록
-│   ├── search_index.py    # SQLite FTS5
-│   ├── nl_query.py        # 자연어 쿼리 파서
-│   └── mcp_server/        # MCP 서버 (5개 도구)
-├── config/categories/policy.yaml
-├── tests/
-├── .github/workflows/
-└── main.py
+  main.py                 # CLI 엔트리포인트
+  requirements.txt        # 의존성
+  config/
+    config.yaml           # DB/리포트 경로 설정
+    categories/
+      policy.yaml  # 소스 + 엔티티 정의
+  policyradar/
+    collector.py          # 데이터 수집
+    analyzer.py           # 엔티티 태깅
+    reporter.py           # HTML 렌더링
+    storage.py            # DuckDB 저장/정리
+    config_loader.py      # YAML 로더
+    models.py             # 데이터 클래스
+  .github/workflows/      # GitHub Actions (crawler + Pages 배포)
 ```
-
-## MCP 서버 도구
-
-| 도구 | 설명 |
-|------|------|
-| `search` | FTS5 기반 자연어 검색 |
-| `recent_updates` | 최근 수집 기사 조회 |
-| `sql` | 읽기 전용 SQL 쿼리 |
-| `top_trends` | 엔티티 언급 빈도 트렌드 |
-| `change_detect` | 정책/약관 변경 신호 감지 |
-
-## 테스트
-
-```bash
-pytest tests/ -v
-```
-
-## CI/CD
-
-- `.github/workflows/radar-crawler.yml`: 매일 00:00 UTC 자동 수집
-- GitHub Pages로 리포트 자동 배포

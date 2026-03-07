@@ -84,23 +84,23 @@ ipython_config.py
 # .python-version
 
 # pipenv
-#Pipfile.lock
+# Pipfile.lock
 
 # UV
-#uv.lock
+# uv.lock
 
 # poetry
-#poetry.lock
-#poetry.toml
+# poetry.lock
+# poetry.toml
 
 # pdm
-#pdm.lock
-#pdm.toml
+# pdm.lock
+# pdm.toml
 .pdm-python
 .pdm-build/
 
 # pixi
-#pixi.lock
+# pixi.lock
 .pixi
 
 # PEP 582
@@ -147,7 +147,16 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# Ruff stuff:
+# PyCharm
+# .idea/
+
+# Abstra
+.abstra/
+
+# Visual Studio Code
+# .vscode/
+
+# Ruff stuff
 .ruff_cache/
 
 # PyPI configuration file
