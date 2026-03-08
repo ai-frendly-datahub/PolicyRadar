@@ -1,5 +1,8 @@
 # PolicyRadar - 정책 정보 레이더
 
+**🌐 Live Report**: https://ai-frendly-datahub.github.io/PolicyRadar/
+
+
 정부 정책 관련 뉴스, 공고, 입찰 정보를 수집하고 정책 분야별 트렌드를 분석합니다.
 
 ## 프로젝트 목표
