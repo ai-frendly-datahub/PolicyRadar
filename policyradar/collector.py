@@ -68,7 +68,7 @@ def _create_session() -> requests.Session:
     retry_strategy = Retry(
         total=3,
         backoff_factor=1,
-        status_forcelist=[429, 500, 502, 503, 504],
+        status_forcelist=[408, 429, 500, 502, 503, 504, 522, 524],
         allowed_methods=frozenset(["GET"]),
         raise_on_status=False,
     )
@@ -218,7 +218,19 @@ def _collect_single(
                 )
             )
 
-        return items
+        # 데이터 검증: 필수 필드 빈값 체크
+        valid_items: list[Article] = []
+        for item in items:
+            if not item.link or item.link == "":
+                continue
+            valid_items.append(item)
+
+        if len(valid_items) < len(items):
+            print(
+                f"Warning: Filtered {len(items) - len(valid_items)} invalid items from {source.name}"
+            )
+
+        return valid_items
     except Exception as exc:
         raise ParseError(f"Failed to parse feed from {source.name}: {exc}") from exc
 
