@@ -49,7 +49,7 @@ def _seed_article(
             """,
             [
                 article_id,
-                "policy",
+                "coffee",
                 "Test Source",
                 title,
                 link,
@@ -64,52 +64,52 @@ def _seed_article(
 
 
 def test_handle_search(tmp_path: Path) -> None:
-    from policyradar.mcp_server.tools import handle_search
+    from mcp_server.tools import handle_search
 
     db_path = tmp_path / "radar.duckdb"
     search_db_path = tmp_path / "search.db"
     _init_articles_table(db_path)
 
-    now = datetime.now(tz=UTC)
+    now = datetime.now(UTC)
     recent_link = "https://example.com/recent"
     old_link = "https://example.com/old"
 
     _seed_article(
         db_path=db_path,
         article_id=1,
-        title="Recent policy change",
+        title="Recent coffee demand",
         link=recent_link,
         collected_at=now - timedelta(days=2),
     )
     _seed_article(
         db_path=db_path,
         article_id=2,
-        title="Old policy change",
+        title="Old coffee demand",
         link=old_link,
         collected_at=now - timedelta(days=20),
     )
 
     with SearchIndex(search_db_path) as idx:
-        idx.upsert(recent_link, "Recent policy change", "Policy update was announced")
-        idx.upsert(old_link, "Old policy change", "Outdated policy note")
+        idx.upsert(recent_link, "Recent coffee demand", "Demand is rising")
+        idx.upsert(old_link, "Old coffee demand", "Demand was low")
 
     output = handle_search(
         search_db_path=search_db_path,
         db_path=db_path,
-        query="last 7 days policy",
+        query="last 7 days coffee",
         limit=10,
     )
 
-    assert "Recent policy change" in output
-    assert "Old policy change" not in output
+    assert "Recent coffee demand" in output
+    assert "Old coffee demand" not in output
 
 
 def test_handle_recent_updates(tmp_path: Path) -> None:
-    from policyradar.mcp_server.tools import handle_recent_updates
+    from mcp_server.tools import handle_recent_updates
 
     db_path = tmp_path / "radar.duckdb"
     _init_articles_table(db_path)
-    now = datetime.now(tz=UTC)
+    now = datetime.now(UTC)
 
     _seed_article(
         db_path=db_path,
@@ -133,7 +133,7 @@ def test_handle_recent_updates(tmp_path: Path) -> None:
 
 
 def test_handle_sql_select(tmp_path: Path) -> None:
-    from policyradar.mcp_server.tools import handle_sql
+    from mcp_server.tools import handle_sql
 
     db_path = tmp_path / "radar.duckdb"
     _init_articles_table(db_path)
@@ -145,7 +145,7 @@ def test_handle_sql_select(tmp_path: Path) -> None:
 
 
 def test_handle_sql_blocked(tmp_path: Path) -> None:
-    from policyradar.mcp_server.tools import handle_sql
+    from mcp_server.tools import handle_sql
 
     db_path = tmp_path / "radar.duckdb"
     _init_articles_table(db_path)
@@ -156,11 +156,11 @@ def test_handle_sql_blocked(tmp_path: Path) -> None:
 
 
 def test_handle_top_trends(tmp_path: Path) -> None:
-    from policyradar.mcp_server.tools import handle_top_trends
+    from mcp_server.tools import handle_top_trends
 
     db_path = tmp_path / "radar.duckdb"
     _init_articles_table(db_path)
-    now = datetime.now(tz=UTC)
+    now = datetime.now(UTC)
 
     _seed_article(
         db_path=db_path,
@@ -168,7 +168,7 @@ def test_handle_top_trends(tmp_path: Path) -> None:
         title="a",
         link="https://example.com/a",
         collected_at=now - timedelta(days=1),
-        entities={"Regulation": ["antitrust", "compliance"], "Platform": ["google"]},
+        entities={"Region": ["ethiopia", "kenya"], "Roaster": ["blue bottle"]},
     )
     _seed_article(
         db_path=db_path,
@@ -176,44 +176,20 @@ def test_handle_top_trends(tmp_path: Path) -> None:
         title="b",
         link="https://example.com/b",
         collected_at=now - timedelta(days=1),
-        entities={"Regulation": ["law"]},
+        entities={"Region": ["brazil"]},
     )
 
     output = handle_top_trends(db_path=db_path, days=7, limit=10)
 
-    assert "Regulation" in output
+    assert "Region" in output
     assert "3" in output
-    assert "Platform" in output
+    assert "Roaster" in output
     assert "1" in output
 
 
-def test_handle_change_detect(tmp_path: Path) -> None:
-    from policyradar.mcp_server.tools import handle_change_detect
+def test_handle_price_watch_stub() -> None:
+    from mcp_server.tools import handle_price_watch
 
-    db_path = tmp_path / "radar.duckdb"
-    _init_articles_table(db_path)
-    now = datetime.now(tz=UTC)
+    output = handle_price_watch(threshold=10.0)
 
-    _seed_article(
-        db_path=db_path,
-        article_id=1,
-        title="Privacy policy update announced",
-        link="https://example.com/change",
-        collected_at=now - timedelta(days=1),
-        entities={"Privacy": ["privacy policy"], "TermsChange": ["update"]},
-    )
-    _seed_article(
-        db_path=db_path,
-        article_id=2,
-        title="General market overview",
-        link="https://example.com/neutral",
-        collected_at=now - timedelta(days=1),
-        entities={"Platform": ["google"]},
-    )
-
-    output = handle_change_detect(db_path=db_path, days=14, limit=10)
-
-    assert "Policy change alerts" in output
-    assert "Privacy policy update announced" in output
-    assert "[Privacy, TermsChange]" in output
-    assert "General market overview" not in output
+    assert "Not available in template project" in output
