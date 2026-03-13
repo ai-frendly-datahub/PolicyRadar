@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-import re
 import shutil
 from collections import Counter
 from collections.abc import Iterable
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
@@ -30,6 +29,7 @@ def _copy_static_assets(report_dir: Path) -> None:
             shutil.rmtree(dst)
         _ = shutil.copytree(str(src), str(dst))
 
+
 def generate_report(
     *,
     category: CategoryConfig,
@@ -43,40 +43,40 @@ def generate_report(
 
     articles_list = list(articles)
     entity_counts = _count_entities(articles_list)
-    
+
     # Convert Article objects to dicts for JSON serialization (for JavaScript charts)
     articles_json = []
     for article in articles_list:
         article_data = {
-            'title': article.title,
-            'link': article.link,
-            'source': article.source,
-            'published': article.published.isoformat() if article.published else None,
-            'published_at': article.published.isoformat() if article.published else None,
-            'summary': article.summary,
-            'matched_entities': article.matched_entities or {},
-            'collected_at': article.collected_at.isoformat()
-            if hasattr(article, 'collected_at') and article.collected_at
+            "title": article.title,
+            "link": article.link,
+            "source": article.source,
+            "published": article.published.isoformat() if article.published else None,
+            "published_at": article.published.isoformat() if article.published else None,
+            "summary": article.summary,
+            "matched_entities": article.matched_entities or {},
+            "collected_at": article.collected_at.isoformat()
+            if hasattr(article, "collected_at") and article.collected_at
             else None,
         }
         articles_json.append(article_data)
 
     heatmap_data = _build_heatmap_data(articles_list)
-    
+
     template = _get_jinja_env().get_template("report.html")
     rendered = template.render(
-            category=category,
-            articles=articles_list,  # Keep original for template rendering
-            articles_json=articles_json,  # JSON-serializable version for charts
-            heatmap_data=heatmap_data,  # 7x24 time pattern heatmap
-            generated_at=datetime.now(timezone.utc),
-            stats=stats,
-            entity_counts=entity_counts,
-            errors=errors or [],
-        )
+        category=category,
+        articles=articles_list,  # Keep original for template rendering
+        articles_json=articles_json,  # JSON-serializable version for charts
+        heatmap_data=heatmap_data,  # 7x24 time pattern heatmap
+        generated_at=datetime.now(UTC),
+        stats=stats,
+        entity_counts=entity_counts,
+        errors=errors or [],
+    )
     _ = output_path.write_text(rendered, encoding="utf-8")
 
-    now_ts = datetime.now(timezone.utc)
+    now_ts = datetime.now(UTC)
     date_stamp = now_ts.strftime("%Y%m%d")
     dated_name = f"{category.category_name}_{date_stamp}.html"
     dated_path = output_path.parent / dated_name
@@ -97,12 +97,12 @@ def _count_entities(articles: Iterable[Article]) -> Counter[str]:
 
 def _build_heatmap_data(articles: Iterable[Article]) -> dict[str, object]:
     """Build 7x24 heatmap matrix (day-of-week x hour) from article timestamps.
-    
+
     Returns dict with 'matrix', 'days', 'hours' for Plotly heatmap.
     """
     # Initialize 7x24 matrix (rows=days, cols=hours)
     matrix = [[0 for _ in range(24)] for _ in range(7)]
-    
+
     for article in articles:
         if article.published is None:
             continue
@@ -110,10 +110,10 @@ def _build_heatmap_data(articles: Iterable[Article]) -> dict[str, object]:
         day_of_week = article.published.weekday()
         hour = article.published.hour
         matrix[day_of_week][hour] += 1
-    
+
     days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     hours = [str(h) for h in range(24)]
-    
+
     return {
         "matrix": matrix,
         "days": days,
@@ -124,26 +124,24 @@ def _build_heatmap_data(articles: Iterable[Article]) -> dict[str, object]:
 def generate_index_html(report_dir: Path) -> Path:
     """Generate an index.html that lists all available report files."""
     report_dir.mkdir(parents=True, exist_ok=True)
-    
+
     html_files = sorted(
         [f for f in report_dir.glob("*.html") if f.name != "index.html"],
         key=lambda p: p.name,
     )
-    
+
     reports = []
     for html_file in html_files:
         name = html_file.stem
         display_name = name.replace("_report", "").replace("_", " ").title()
         reports.append({"filename": html_file.name, "display_name": display_name})
-    
+
     template = _get_jinja_env().get_template("index.html")
     rendered = template.render(
         reports=reports,
-        generated_at=datetime.now(timezone.utc),
+        generated_at=datetime.now(UTC),
     )
-    
+
     index_path = report_dir / "index.html"
     _ = index_path.write_text(rendered, encoding="utf-8")
     return index_path
-
-
