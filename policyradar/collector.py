@@ -13,6 +13,7 @@ from urllib.parse import urlparse
 
 import feedparser
 import requests
+import structlog
 from pybreaker import CircuitBreakerError
 from requests.adapters import HTTPAdapter
 from tenacity import (
@@ -26,6 +27,9 @@ from urllib3.util.retry import Retry
 from .exceptions import NetworkError, ParseError, SourceError
 from .models import Article, Source
 from .resilience import get_circuit_breaker_manager
+
+
+logger = structlog.get_logger(__name__)
 
 
 _DEFAULT_HEADERS: dict[str, str] = {
@@ -226,8 +230,10 @@ def _collect_single(
             valid_items.append(item)
 
         if len(valid_items) < len(items):
-            print(
-                f"Warning: Filtered {len(items) - len(valid_items)} invalid items from {source.name}"
+            logger.warning(
+                "filtered_invalid_items",
+                filtered=len(items) - len(valid_items),
+                source=source.name,
             )
 
         return valid_items
