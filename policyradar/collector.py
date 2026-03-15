@@ -254,6 +254,39 @@ def collect_sources(
     return articles, errors
 
 
+def _validate_announcement_format(entry: Mapping[str, Any], source_name: str) -> list[str]:
+    """Validate announcement/policy entry format.
+
+    Checks for common issues in policy announcement feeds including
+    missing required fields, malformed dates, and unexpected formats.
+
+    Returns:
+        List of validation warning messages (empty if valid).
+    """
+    warnings: list[str] = []
+    title = _entry_text(entry, "title").strip()
+    link = _entry_text(entry, "link").strip()
+
+    if not title:
+        warnings.append(f"{source_name}: Entry missing title")
+    elif len(title) < 3:
+        warnings.append(f"{source_name}: Title too short: '{title}'")
+    elif len(title) > 1000:
+        warnings.append(f"{source_name}: Title suspiciously long ({len(title)} chars)")
+
+    if not link:
+        warnings.append(f"{source_name}: Entry missing link")
+    elif not link.startswith(("http://", "https://")):
+        warnings.append(f"{source_name}: Invalid link format: '{link[:80]}'")
+
+    # Check for common announcement format issues
+    summary = _entry_text(entry, "summary") or _entry_text(entry, "description")
+    if summary and len(summary.strip()) < 2:
+        warnings.append(f"{source_name}: Summary too short to be useful")
+
+    return warnings
+
+
 def _collect_single(
     source: Source,
     *,
@@ -263,6 +296,11 @@ def _collect_single(
     session: requests.Session | None = None,
 ) -> list[Article]:
     if source.type.lower() != "rss":
+        logger.error(
+            "unsupported_source_type",
+            source=source.name,
+            source_type=source.type,
+        )
         raise SourceError(source.name, f"Unsupported source type '{source.type}'")
 
     try:
@@ -279,9 +317,36 @@ def _collect_single(
 
     try:
         feed = feedparser.parse(response.content)
+
+        # Validate feed-level format
+        if not hasattr(feed, "entries") or not isinstance(feed.entries, list):
+            logger.warning(
+                "unexpected_feed_format",
+                source=source.name,
+                feed_keys=list(vars(feed).keys()) if hasattr(feed, "__dict__") else "unknown",
+            )
+            raise ParseError(
+                f"Unexpected feed format from {source.name}: no 'entries' attribute found"
+            )
+
+        if feed.bozo and feed.bozo_exception:
+            logger.warning(
+                "feed_parse_warning",
+                source=source.name,
+                bozo_exception=str(feed.bozo_exception),
+            )
+
         items: list[Article] = []
+        validation_warning_count = 0
 
         for entry in feed.entries[:limit]:
+            # Validate announcement format
+            format_warnings = _validate_announcement_format(entry, source.name)
+            if format_warnings:
+                validation_warning_count += 1
+                for warning in format_warnings:
+                    logger.warning("announcement_format_warning", message=warning)
+
             published = _extract_datetime(entry)
             summary = _entry_text(entry, "summary") or _entry_text(entry, "description")
             if not summary:
@@ -293,15 +358,35 @@ def _collect_single(
                         if isinstance(value, str):
                             summary = value
 
+            title = html.unescape(_entry_text(entry, "title").strip()) or "(no title)"
+            link = _entry_text(entry, "link").strip()
+
+            # Skip entries with invalid link format
+            if link and not link.startswith(("http://", "https://")):
+                logger.warning(
+                    "skipped_invalid_link",
+                    source=source.name,
+                    link=link[:80],
+                )
+                continue
+
             items.append(
                 Article(
-                    title=html.unescape(_entry_text(entry, "title").strip()) or "(no title)",
-                    link=_entry_text(entry, "link").strip(),
+                    title=title,
+                    link=link,
                     summary=html.unescape(summary.strip()),
                     published=published,
                     source=source.name,
                     category=category,
                 )
+            )
+
+        if validation_warning_count > 0:
+            logger.info(
+                "announcement_validation_summary",
+                source=source.name,
+                entries_with_warnings=validation_warning_count,
+                total_entries=len(feed.entries[:limit]),
             )
 
         # 데이터 검증: 필수 필드 빈값 체크
@@ -319,6 +404,8 @@ def _collect_single(
             )
 
         return valid_items
+    except (ParseError, SourceError):
+        raise
     except Exception as exc:
         raise ParseError(f"Failed to parse feed from {source.name}: {exc}") from exc
 
