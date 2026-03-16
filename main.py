@@ -11,7 +11,7 @@ from policyradar.common.validators import validate_article
 from policyradar.config_loader import load_category_config, load_settings
 from policyradar.date_storage import apply_date_storage_policy
 from policyradar.raw_logger import RawLogger
-from policyradar.reporter import generate_report
+from policyradar.reporter import generate_index_html, generate_report
 from policyradar.search_index import SearchIndex
 from policyradar.storage import RadarStorage
 
@@ -143,6 +143,8 @@ def run(
         stats=stats,
         errors=errors,
     )
+    # Generate index.html
+    generate_index_html(settings.report_dir)
     date_storage = apply_date_storage_policy(
         database_path=settings.database_path,
         raw_data_dir=settings.raw_data_dir,
