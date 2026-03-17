@@ -3,11 +3,11 @@
   "category": "policy",
   "article_count": 200,
   "source_count": 9,
-  "matched_count": 95,
+  "matched_count": 94,
   "top_entities": [
     {
       "name": "Regulation",
-      "count": 140
+      "count": 138
     },
     {
       "name": "Platform",
@@ -27,15 +27,15 @@
     }
   ],
   "sources": {
+    "The Hill": 81,
     "TechCrunch Policy": 47,
     "The Verge": 22,
-    "The Hill": 80,
     "White House Presidential Actions": 7,
     "SEC Speeches": 4,
     "EFF Updates": 5,
     "SEC Press Releases": 2,
     "CDC Media Releases": 3,
-    "GovInfo Bills": 30
+    "GovInfo Bills": 29
   },
-  "generated_at": "2026-03-17T09:38:23.350461+09:00"
+  "generated_at": "2026-03-17T11:34:01.088143+09:00"
 }
