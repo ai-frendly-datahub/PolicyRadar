@@ -48,6 +48,14 @@ sources:
     type: "rss"
     url: "https://www.govinfo.gov/rss/crpt.xml"
 
+  # === 한국 정책/규제 ===
+  - name: "금융위원회 보도자료"
+    type: "rss"
+    url: "https://www.fsc.go.kr/about/fsc_bbs_rss/?fid=0111"
+  - name: "금융위원회 보도설명"
+    type: "rss"
+    url: "https://www.fsc.go.kr/about/fsc_bbs_rss/?fid=0112"
+
 entities:
   - name: "Privacy"
     display_name: "개인정보 정책"
