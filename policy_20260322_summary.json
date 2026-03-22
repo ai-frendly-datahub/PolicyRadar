@@ -1,0 +1,52 @@
+{
+  "date": "2026-03-22",
+  "category": "policy",
+  "article_count": 200,
+  "source_count": 8,
+  "matched_count": 120,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 147
+    },
+    {
+      "name": "Legislation",
+      "count": 103
+    },
+    {
+      "name": "Platform",
+      "count": 12
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 6
+    },
+    {
+      "name": "Privacy",
+      "count": 5
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 3
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 3
+    },
+    {
+      "name": "TermsChange",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "The Hill": 91,
+    "The Verge": 20,
+    "TechCrunch Policy": 22,
+    "GovInfo Bills": 62,
+    "EFF Updates": 2,
+    "White House Presidential Actions": 1,
+    "SEC Speeches": 1,
+    "NIST Cybersecurity Insights": 1
+  },
+  "generated_at": "2026-03-22T11:42:14.805149+09:00"
+}
