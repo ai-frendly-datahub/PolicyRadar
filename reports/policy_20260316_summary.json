@@ -1,0 +1,41 @@
+{
+  "date": "2026-03-16",
+  "category": "policy",
+  "article_count": 200,
+  "source_count": 9,
+  "matched_count": 108,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 166
+    },
+    {
+      "name": "Platform",
+      "count": 24
+    },
+    {
+      "name": "Privacy",
+      "count": 12
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 8
+    },
+    {
+      "name": "TermsChange",
+      "count": 5
+    }
+  ],
+  "sources": {
+    "TechCrunch Policy": 42,
+    "The Hill": 82,
+    "The Verge": 22,
+    "EFF Updates": 9,
+    "CDC Media Releases": 3,
+    "White House Presidential Actions": 7,
+    "SEC Speeches": 4,
+    "GovInfo Bills": 30,
+    "SEC Press Releases": 1
+  },
+  "generated_at": "2026-03-16T15:01:13.793195+09:00"
+}
