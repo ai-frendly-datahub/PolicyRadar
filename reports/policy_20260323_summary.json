@@ -1,0 +1,46 @@
+{
+  "date": "2026-03-23",
+  "category": "policy",
+  "article_count": 200,
+  "source_count": 6,
+  "matched_count": 112,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 135
+    },
+    {
+      "name": "Legislation",
+      "count": 87
+    },
+    {
+      "name": "Platform",
+      "count": 15
+    },
+    {
+      "name": "Privacy",
+      "count": 7
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 6
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 3
+    },
+    {
+      "name": "TermsChange",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "The Hill": 104,
+    "The Verge": 29,
+    "금융위원회 보도자료": 2,
+    "TechCrunch Policy": 23,
+    "GovInfo Bills": 41,
+    "EFF Updates": 1
+  },
+  "generated_at": "2026-03-23T11:42:31.688052+09:00"
+}
