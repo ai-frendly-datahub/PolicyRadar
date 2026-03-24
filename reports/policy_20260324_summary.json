@@ -1,0 +1,57 @@
+{
+  "date": "2026-03-24",
+  "category": "policy",
+  "article_count": 200,
+  "source_count": 13,
+  "matched_count": 110,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 180
+    },
+    {
+      "name": "Legislation",
+      "count": 21
+    },
+    {
+      "name": "Platform",
+      "count": 18
+    },
+    {
+      "name": "Privacy",
+      "count": 12
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 9
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 5
+    },
+    {
+      "name": "TermsChange",
+      "count": 3
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 2
+    }
+  ],
+  "sources": {
+    "The Hill": 71,
+    "금융위원회 보도자료": 3,
+    "TechCrunch Policy": 34,
+    "The Verge": 18,
+    "CDC Media Releases": 5,
+    "NIST News": 2,
+    "NIST Cybersecurity Insights": 2,
+    "EFF Updates": 10,
+    "White House Presidential Actions": 9,
+    "SEC Speeches": 6,
+    "GovInfo Bills": 33,
+    "금융위원회 보도설명": 3,
+    "SEC Press Releases": 4
+  },
+  "generated_at": "2026-03-24T12:37:04.053548+09:00"
+}
