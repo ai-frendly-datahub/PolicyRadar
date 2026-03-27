@@ -1,0 +1,52 @@
+{
+  "date": "2026-03-27",
+  "category": "policy",
+  "article_count": 200,
+  "source_count": 8,
+  "matched_count": 126,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 156
+    },
+    {
+      "name": "Legislation",
+      "count": 96
+    },
+    {
+      "name": "Platform",
+      "count": 24
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 11
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 4
+    },
+    {
+      "name": "Privacy",
+      "count": 4
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 3
+    },
+    {
+      "name": "TermsChange",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "The Hill": 93,
+    "TechCrunch Policy": 30,
+    "The Verge": 20,
+    "금융위원회 보도자료": 3,
+    "White House Presidential Actions": 1,
+    "EFF Updates": 2,
+    "GovInfo Bills": 50,
+    "SEC Speeches": 1
+  },
+  "generated_at": "2026-03-27T11:48:51.558636+09:00"
+}
