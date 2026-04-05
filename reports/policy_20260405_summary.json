@@ -1,0 +1,53 @@
+{
+  "date": "2026-04-05",
+  "category": "policy",
+  "article_count": 200,
+  "source_count": 9,
+  "matched_count": 87,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 116
+    },
+    {
+      "name": "Legislation",
+      "count": 35
+    },
+    {
+      "name": "Platform",
+      "count": 16
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 13
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 10
+    },
+    {
+      "name": "Privacy",
+      "count": 9
+    },
+    {
+      "name": "TermsChange",
+      "count": 4
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "Reddit r/law": 22,
+    "Reddit r/technology (Tech Policy)": 37,
+    "Reddit r/politics": 41,
+    "The Hill": 68,
+    "TechCrunch Policy": 14,
+    "The Verge": 12,
+    "EFF Updates": 3,
+    "White House Presidential Actions": 2,
+    "CDC Media Releases": 1
+  },
+  "generated_at": "2026-04-05T11:54:45.132869+09:00"
+}
