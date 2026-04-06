@@ -60,18 +60,20 @@ sources:
     url: "https://www.reddit.com/r/technology/.rss"
 
   # === Government Legislative Tracking ===
-  - name: "GovTrack Bill Updates"
-    type: "rss"
-    url: "https://www.govtrack.us/events/events.rss?feeds=misc%3Aallbills"
+  # NOTE: 2026-04-06 RSS 404 오류로 비활성화
+  # - name: "GovTrack Bill Updates"
+  #   type: "rss"
+  #   url: "https://www.govtrack.us/events/events.rss?feeds=misc%3Aallbills"
   - name: "ProPublica Congress"
     type: "rss"
     url: "https://www.propublica.org/feeds/propublica/main"
   - name: "Senate Floor Activity"
     type: "rss"
     url: "https://www.senate.gov/legislative/LIS/floor_activity/floor_activity.rss"
-  - name: "House Floor Activity"
-    type: "rss"
-    url: "https://clerk.house.gov/Rss.aspx?Housefeed"
+  # NOTE: 2026-04-06 RSS 404 오류로 비활성화
+  # - name: "House Floor Activity"
+  #   type: "rss"
+  #   url: "https://clerk.house.gov/Rss.aspx?Housefeed"
   - name: "EPA Regulations"
     type: "rss"
     url: "https://www.epa.gov/newsreleases/search/rss/field_press_office/headquarters"
@@ -83,15 +85,17 @@ sources:
     url: "https://www.ftc.gov/news-events/news/press-releases/feed"
 
   # === Think Tanks & Policy Research ===
-  - name: "Urban Institute"
-    type: "rss"
-    url: "https://www.urban.org/rss.xml"
+  # NOTE: 2026-04-06 RSS 404 오류로 비활성화
+  # - name: "Urban Institute"
+  #   type: "rss"
+  #   url: "https://www.urban.org/rss.xml"
   - name: "CATO Institute"
     type: "rss"
     url: "https://www.cato.org/rss/recent-opeds"
-  - name: "Heritage Foundation"
-    type: "rss"
-    url: "https://www.heritage.org/rss/commentary"
+  # NOTE: 2026-04-06 RSS 404 오류로 비활성화
+  # - name: "Heritage Foundation"
+  #   type: "rss"
+  #   url: "https://www.heritage.org/rss/commentary"
   - name: "Center for American Progress"
     type: "rss"
     url: "https://www.americanprogress.org/feed/"
