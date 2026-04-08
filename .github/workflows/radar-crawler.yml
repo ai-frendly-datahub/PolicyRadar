@@ -55,6 +55,34 @@ jobs:
         run: |
           python -c "from policyradar.reporter import generate_index_html; from pathlib import Path; generate_index_html(Path('reports'))"
 
+      - name: Run Policy Alert Monitor
+        continue-on-error: true
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          echo "## Policy Change Alerts" >> $GITHUB_STEP_SUMMARY
+          python -m alerts.alert_monitor \
+            --db-path data/radar_data.duckdb \
+            --category "${{ env.RADAR_CATEGORY }}" \
+            --hours 24 \
+            --output json > alerts.json 2>&1 || true
+
+          # Show alerts in summary
+          if [ -f "alerts.json" ]; then
+            ALERT_COUNT=$(python -c "import json; data=json.load(open('alerts.json')); print(data.get('alert_count', 0))" 2>/dev/null || echo "0")
+            echo "Found **$ALERT_COUNT** policy change alerts" >> $GITHUB_STEP_SUMMARY
+            python -m alerts.alert_monitor --db-path data/radar_data.duckdb --category "${{ env.RADAR_CATEGORY }}" --hours 24 >> $GITHUB_STEP_SUMMARY 2>&1 || true
+          fi
+
+          # Send Telegram notification if configured
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            python -m alerts.telegram_notifier \
+              --db-path data/radar_data.duckdb \
+              --category "${{ env.RADAR_CATEGORY }}" \
+              --hours 24 || true
+          fi
+
       - name: Run Quality Checks
         if: always()
         run: |

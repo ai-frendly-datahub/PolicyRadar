@@ -1,0 +1,71 @@
+# Policy Change Alert Configuration
+
+# Keywords indicating significant policy changes (Korean)
+alert_keywords:
+  # Implementation/Enactment
+  implementation:
+    - "시행"
+    - "시행령"
+    - "시행일"
+    - "발효"
+
+  # Amendment/Revision
+  amendment:
+    - "개정"
+    - "개정안"
+    - "일부개정"
+    - "전부개정"
+
+  # Abolition/Repeal
+  abolition:
+    - "폐지"
+    - "폐기"
+    - "철회"
+
+  # New establishment
+  establishment:
+    - "신설"
+    - "제정"
+    - "신규"
+    - "도입"
+
+# Alert thresholds
+thresholds:
+  # Minimum number of articles to trigger an alert
+  min_articles: 1
+
+  # Maximum number of articles per alert message (to avoid spam)
+  max_articles_per_alert: 10
+
+  # Time window for recent articles (hours)
+  recent_hours: 24
+
+# Alert priority levels
+priority_levels:
+  high:
+    keywords:
+      - "시행"
+      - "폐지"
+      - "제정"
+    description: "즉각 조치 필요"
+
+  medium:
+    keywords:
+      - "개정"
+      - "개정안"
+    description: "검토 필요"
+
+  low:
+    keywords:
+      - "신설"
+      - "도입"
+    description: "정보 제공"
+
+# Message templates (Korean)
+message_templates:
+  header: "[정책 변경 알림] {date}"
+  high_priority: "긴급: {title}"
+  medium_priority: "중요: {title}"
+  low_priority: "정보: {title}"
+  footer: "총 {count}건의 정책 변경이 감지되었습니다."
+  no_alerts: "감지된 정책 변경 사항이 없습니다."
