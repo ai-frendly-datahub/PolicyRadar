@@ -2,36 +2,36 @@
   "date": "2026-04-08",
   "category": "policy",
   "article_count": 200,
-  "source_count": 11,
-  "matched_count": 128,
+  "source_count": 12,
+  "matched_count": 130,
   "top_entities": [
     {
       "name": "Regulation",
-      "count": 116
+      "count": 120
     },
     {
       "name": "Legislation",
-      "count": 55
+      "count": 57
     },
     {
       "name": "ConsumerRights",
+      "count": 40
+    },
+    {
+      "name": "JudicialRuling",
       "count": 38
     },
     {
       "name": "Platform",
-      "count": 36
-    },
-    {
-      "name": "JudicialRuling",
-      "count": 33
-    },
-    {
-      "name": "ExecutiveOrder",
-      "count": 12
+      "count": 37
     },
     {
       "name": "FinancialRegulation",
-      "count": 5
+      "count": 18
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 18
     },
     {
       "name": "Privacy",
@@ -42,22 +42,27 @@
       "count": 3
     },
     {
+      "name": "AIPolicy",
+      "count": 1
+    },
+    {
       "name": "TermsChange",
       "count": 1
     }
   ],
   "sources": {
-    "The Hill": 66,
-    "Reddit r/technology (Tech Policy)": 30,
-    "Reddit r/politics": 34,
-    "Reddit r/law": 31,
-    "The Verge": 12,
+    "The Hill": 63,
+    "Reddit r/technology (Tech Policy)": 32,
+    "금융위원회 보도자료": 4,
+    "금융위원회 보도설명": 1,
+    "Reddit r/politics": 33,
+    "Reddit r/law": 30,
+    "The Verge": 11,
     "TechCrunch Policy": 22,
     "SEC Press Releases": 1,
     "EFF Updates": 1,
     "SEC Speeches": 1,
-    "ProPublica Congress": 1,
-    "금융위원회 보도자료": 1
+    "ProPublica Congress": 1
   },
-  "generated_at": "2026-04-08T09:54:12.724098+09:00"
+  "generated_at": "2026-04-08T10:49:02.026203+09:00"
 }
