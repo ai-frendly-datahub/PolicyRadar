@@ -1,0 +1,60 @@
+{
+  "date": "2026-04-13",
+  "category": "policy",
+  "article_count": 200,
+  "source_count": 8,
+  "matched_count": 113,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 103
+    },
+    {
+      "name": "Legislation",
+      "count": 46
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 37
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 35
+    },
+    {
+      "name": "Platform",
+      "count": 28
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 20
+    },
+    {
+      "name": "FinancialRegulation",
+      "count": 3
+    },
+    {
+      "name": "TermsChange",
+      "count": 3
+    },
+    {
+      "name": "LaborPolicy",
+      "count": 3
+    },
+    {
+      "name": "Privacy",
+      "count": 3
+    }
+  ],
+  "sources": {
+    "Reddit r/technology (Tech Policy)": 39,
+    "Reddit r/politics": 45,
+    "The Hill": 62,
+    "Reddit r/law": 25,
+    "금융위원회 보도자료": 2,
+    "금융위원회 보도설명": 1,
+    "TechCrunch Policy": 12,
+    "The Verge": 14
+  },
+  "generated_at": "2026-04-13T12:26:20.114557+09:00"
+}
