@@ -1,0 +1,59 @@
+{
+  "date": "2026-04-20",
+  "category": "policy",
+  "article_count": 200,
+  "source_count": 7,
+  "matched_count": 111,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 97
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 59
+    },
+    {
+      "name": "Legislation",
+      "count": 41
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 38
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 29
+    },
+    {
+      "name": "Platform",
+      "count": 17
+    },
+    {
+      "name": "LaborPolicy",
+      "count": 3
+    },
+    {
+      "name": "EnvironmentalPolicy",
+      "count": 3
+    },
+    {
+      "name": "Privacy",
+      "count": 1
+    },
+    {
+      "name": "FinancialRegulation",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "Reddit r/technology (Tech Policy)": 36,
+    "Reddit r/politics": 48,
+    "Reddit r/law": 30,
+    "The Hill": 62,
+    "TechCrunch Policy": 13,
+    "The Verge": 10,
+    "White House Presidential Actions": 1
+  },
+  "generated_at": "2026-04-20T12:27:11.502920+09:00"
+}
