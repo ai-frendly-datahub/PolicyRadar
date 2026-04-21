@@ -1,0 +1,70 @@
+{
+  "date": "2026-04-21",
+  "category": "policy",
+  "article_count": 200,
+  "source_count": 14,
+  "matched_count": 137,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 176
+    },
+    {
+      "name": "Legislation",
+      "count": 84
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 57
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 48
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 43
+    },
+    {
+      "name": "Platform",
+      "count": 30
+    },
+    {
+      "name": "FinancialRegulation",
+      "count": 26
+    },
+    {
+      "name": "Privacy",
+      "count": 14
+    },
+    {
+      "name": "AIPolicy",
+      "count": 6
+    },
+    {
+      "name": "LaborPolicy",
+      "count": 6
+    },
+    {
+      "name": "TermsChange",
+      "count": 3
+    }
+  ],
+  "sources": {
+    "The Hill": 53,
+    "Reddit r/politics": 33,
+    "Reddit r/technology (Tech Policy)": 32,
+    "UK Parliament Bills": 13,
+    "TechCrunch Policy": 15,
+    "The Verge": 10,
+    "EFF Updates": 2,
+    "금융위원회 보도자료": 5,
+    "Reddit r/law": 25,
+    "White House Presidential Actions": 6,
+    "SEC Speeches": 3,
+    "FDA News Releases": 1,
+    "SEC Press Releases": 1,
+    "ProPublica Congress": 1
+  },
+  "generated_at": "2026-04-21T12:18:51.334921+09:00"
+}
