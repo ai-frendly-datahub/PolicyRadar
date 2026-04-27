@@ -1,0 +1,78 @@
+{
+  "date": "2026-04-14",
+  "category": "policy",
+  "article_count": 28,
+  "source_count": 6,
+  "matched_count": 28,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 183
+    },
+    {
+      "name": "Privacy",
+      "count": 143
+    },
+    {
+      "name": "Platform",
+      "count": 55
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 34
+    },
+    {
+      "name": "Legislation",
+      "count": 29
+    },
+    {
+      "name": "AIPolicy",
+      "count": 24
+    },
+    {
+      "name": "EnforcementAction",
+      "count": 23
+    },
+    {
+      "name": "EnforcementOutcome",
+      "count": 22
+    },
+    {
+      "name": "OperationalEvent",
+      "count": 12
+    },
+    {
+      "name": "LaborPolicy",
+      "count": 10
+    },
+    {
+      "name": "FinancialRegulation",
+      "count": 4
+    },
+    {
+      "name": "SecurityClassificationFramework",
+      "count": 3
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 2
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 2
+    },
+    {
+      "name": "EnvironmentalPolicy",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "KISA 보안공지": 12,
+    "PIPC 보도자료": 10,
+    "UK Parliament Bills": 2,
+    "The Hill": 1,
+    "금융위원회 보도자료": 2,
+    "EFF Updates": 1
+  },
+  "generated_at": "2026-04-14T20:26:47.142854+09:00"
+}

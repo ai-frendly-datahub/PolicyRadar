@@ -1,0 +1,48 @@
+{
+  "date": "2026-04-13",
+  "category": "policy",
+  "article_count": 4,
+  "source_count": 4,
+  "matched_count": 4,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 10
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 3
+    },
+    {
+      "name": "Legislation",
+      "count": 2
+    },
+    {
+      "name": "FinancialRegulation",
+      "count": 2
+    },
+    {
+      "name": "TermsChange",
+      "count": 1
+    },
+    {
+      "name": "AgencyGuidance",
+      "count": 1
+    },
+    {
+      "name": "EnforcementOutcome",
+      "count": 1
+    },
+    {
+      "name": "OperationalEvent",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "UK Parliament Bills": 1,
+    "The Hill": 1,
+    "금융위원회 보도자료": 1,
+    "금융위원회 보도설명": 1
+  },
+  "generated_at": "2026-04-13T17:15:18.226082+09:00"
+}

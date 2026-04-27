@@ -187,6 +187,57 @@ def test_handle_top_trends(tmp_path: Path) -> None:
     assert "1" in output
 
 
+def test_handle_quality_report(tmp_path: Path) -> None:
+    from mcp_server.tools import handle_quality_report
+    from policyradar.models import Article
+    from policyradar.storage import RadarStorage
+
+    db_path = tmp_path / "radar.duckdb"
+    now = datetime.now(UTC)
+    storage = RadarStorage(db_path)
+    try:
+        storage.upsert_articles(
+            [
+                Article(
+                    title="Public comment on privacy rule",
+                    link="https://example.com/consultation",
+                    summary="Comments due by April 30, 2026.",
+                    published=now - timedelta(hours=2),
+                    collected_at=now,
+                    source="EPA Regulations",
+                    category="policy",
+                    matched_entities={
+                        "ConsultationDeadline": ["2026-04-30"],
+                        "OperationalEvent": ["public_consultation"],
+                    },
+                ),
+                Article(
+                    title="Agency announces civil money penalty",
+                    link="https://example.com/enforcement",
+                    summary="The agency announced a fine.",
+                    published=now - timedelta(hours=3),
+                    collected_at=now,
+                    source="SEC Press Releases",
+                    category="policy",
+                    matched_entities={
+                        "EnforcementOutcome": ["penalty"],
+                        "OperationalEvent": ["enforcement_action"],
+                    },
+                ),
+            ]
+        )
+    finally:
+        storage.close()
+
+    output = handle_quality_report(db_path=db_path, category="policy", days=30, limit=20)
+    payload = json.loads(output)
+
+    assert payload["category"] == "policy"
+    assert payload["summary"]["public_consultation_events"] >= 1
+    assert payload["summary"]["enforcement_action_events"] >= 1
+    assert "official N2SF C/S/O grading" in payload["classification_scope_note"]
+
+
 def test_handle_price_watch_stub() -> None:
     from mcp_server.tools import handle_price_watch
 

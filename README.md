@@ -3,11 +3,11 @@
 **🌐 Live Report**: https://ai-frendly-datahub.github.io/PolicyRadar/
 
 
-정부 정책 관련 뉴스, 공고, 입찰 정보를 수집하고 정책 분야별 트렌드를 분석합니다.
+정부 정책 뉴스뿐 아니라 집행 공지, 행정예고, 규제기관 가이드, 플랫폼 정책 변화를 함께 수집해 정책 실행 신호를 분석합니다.
 
 ## 프로젝트 목표
 
-- **데이터 수집**: 정책 뉴스 RSS 및 정부 공고
+- **데이터 수집**: 정책 뉴스 RSS, 정부 공고, 집행 공지, 행정예고, 규제기관 보도자료
 - **엔티티 분석**: 정책 분야별 키워드 매칭 (경제, 교육, 환경, 복지 등)
 - **트렌드 리포트**: DuckDB 저장 + HTML 리포트로 {domain} 동향 시각화
 - **자동화**: GitHub Actions 일일 수집 + GitHub Pages 리포트 자동 배포
@@ -54,6 +54,28 @@
 - **분석**: 엔티티별 키워드 매칭. 매칭된 키워드를 리포트에 칩으로 표시합니다.
 - **리포트**: `reports/<category>_report.html`을 생성하며, 최근 N일(기본 7일) 기사와 엔티티 히트 카운트, 수집 오류를 표시합니다.
 
+## 정책 프레임워크 연구
+
+- N2SF, CSAP, FIPS 199, FedRAMP 20x를 현재 워크스페이스에 어떻게 적용할지에 대한 운영 메모:
+  [docs/n2sf-classification-applicability.md](/home/kjs/projects/ai-frendly-datahub/PolicyRadar/docs/n2sf-classification-applicability.md)
+- `policy.yaml`에는 `SecurityClassificationFramework` 엔티티가 추가되어 공공 보안분류/클라우드 인증 정책 신호를 별도로 추적합니다.
+
+## 소스 전략
+
+- `공식`: White House, SEC, GovInfo, FSC, PIPC, KISA
+- `운영`: Federal Register, FTC/FSC 집행/설명, PIPC/KISA 공지
+- `시장`: 정책/기술 미디어와 think tank
+- `커뮤니티`: Reddit 법/정치/기술 정책 담론
+
+JavaScript/browser 소스를 제대로 수집하려면 `pip install 'radar-core[browser]'`가 필요합니다.
+
+## 데이터 품질 운영
+
+- `config/categories/policy.yaml`의 `data_quality`는 `public_consultation`, `enforcement_action`, `policy_effective_date`, `platform_policy_change`, `security_classification_framework` 이벤트를 분리합니다.
+- `policyradar.policy_signals`는 의견수렴 마감일, 시행일, 집행 결과를 `matched_entities`의 `ConsultationDeadline`, `PolicyEffectiveDate`, `EnforcementOutcome`, `OperationalEvent`로 보강합니다.
+- `source_backlog`의 Regulations.gov, lawmaking.go.kr, FTC cases, PIPC 처분 아카이브, 플랫폼 정책 페이지는 parser·ToS·개인정보·diff 검증 전까지 기본 비활성 후보로 둡니다.
+- N2SF/CSAP/FIPS 199/FedRAMP 20x는 공식 제도 등급과 내부 운영 오버레이를 분리해 태깅합니다.
+
 ## 기본 경로
 
 - DB: `data/radar_data.duckdb`
@@ -78,3 +100,15 @@ PolicyRadar/
     models.py             # 데이터 클래스
   .github/workflows/      # GitHub Actions (crawler + Pages 배포)
 ```
+
+<!-- DATAHUB-OPS-AUDIT:START -->
+## DataHub Operations
+
+- CI/CD workflows: `pr-checks.yml`, `radar-crawler.yml`, `release.yml`.
+- GitHub Pages visualization: `reports/index.html` (valid HTML); https://ai-frendly-datahub.github.io/PolicyRadar/.
+- Latest remote Pages check: HTTP 200, HTML.
+- Local workspace audit: 61 Python files parsed, 0 syntax errors.
+- Re-run audit from the workspace root: `python scripts/audit_ci_pages_readme.py --syntax-check --write`.
+- Latest audit report: `_workspace/2026-04-14_github_ci_pages_readme_audit.md`.
+- Latest Pages URL report: `_workspace/2026-04-14_github_pages_url_check.md`.
+<!-- DATAHUB-OPS-AUDIT:END -->

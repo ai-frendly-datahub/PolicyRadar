@@ -9,8 +9,11 @@ from typing import cast
 
 import duckdb
 
+from ..config_loader import load_category_config, load_category_quality_config
 from policyradar.nl_query import parse_query
+from ..quality_report import build_quality_report
 from policyradar.search_index import SearchIndex
+from ..storage import RadarStorage
 
 
 _ALLOWED_SQL = re.compile(r"^\s*(SELECT|WITH|EXPLAIN)\b", re.IGNORECASE)
@@ -226,3 +229,36 @@ def handle_change_detect(*, db_path: Path, days: int = 14, limit: int = 10) -> s
 
     header = f"Policy change alerts ({len(changes)} detected in last {days} days):"
     return "\n".join([header, *changes[:limit]])
+
+
+def handle_quality_report(
+    *,
+    db_path: Path,
+    category: str = "policy",
+    categories_dir: Path | None = None,
+    days: int = 30,
+    limit: int = 500,
+) -> str:
+    """Build a structured policy quality report from recent stored events."""
+    try:
+        category_cfg = load_category_config(category, categories_dir=categories_dir)
+        quality_cfg = load_category_quality_config(category, categories_dir=categories_dir)
+        storage = RadarStorage(db_path)
+        try:
+            articles = storage.recent_articles(
+                category_cfg.category_name,
+                days=max(1, days),
+                limit=max(1, limit),
+            )
+        finally:
+            storage.close()
+        report = build_quality_report(
+            category=category_cfg,
+            articles=articles,
+            errors=[],
+            quality_config=quality_cfg,
+        )
+    except Exception as exc:  # noqa: BLE001
+        return f"Error: {exc}"
+
+    return json.dumps(report, ensure_ascii=False, indent=2, default=str)

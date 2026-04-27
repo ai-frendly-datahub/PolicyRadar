@@ -1,0 +1,135 @@
+{
+  "date": "2026-04-24",
+  "category": "policy",
+  "article_count": 185,
+  "source_count": 17,
+  "matched_count": 172,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 315
+    },
+    {
+      "name": "Legislation",
+      "count": 163
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 59
+    },
+    {
+      "name": "Privacy",
+      "count": 38
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 27
+    },
+    {
+      "name": "Platform",
+      "count": 23
+    },
+    {
+      "name": "EnforcementOutcome",
+      "count": 20
+    },
+    {
+      "name": "OperationalEvent",
+      "count": 19
+    },
+    {
+      "name": "FinancialRegulation",
+      "count": 18
+    },
+    {
+      "name": "EnforcementAction",
+      "count": 17
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 11
+    },
+    {
+      "name": "LaborPolicy",
+      "count": 10
+    },
+    {
+      "name": "EnvironmentalPolicy",
+      "count": 8
+    },
+    {
+      "name": "PublicConsultation",
+      "count": 5
+    },
+    {
+      "name": "SecurityClassificationFramework",
+      "count": 5
+    },
+    {
+      "name": "AIPolicy",
+      "count": 4
+    },
+    {
+      "name": "AgencyGuidance",
+      "count": 4
+    },
+    {
+      "name": "TermsChange",
+      "count": 2
+    }
+  ],
+  "sources": {
+    "PIPC 보도자료": 15,
+    "The Verge": 2,
+    "The Hill": 39,
+    "Reddit r/law": 44,
+    "UK Parliament Bills": 21,
+    "Reddit r/politics": 12,
+    "금융위원회 보도자료": 6,
+    "EFF Updates": 4,
+    "Reddit r/technology (Tech Policy)": 2,
+    "CDC Media Releases": 1,
+    "EPA Regulations": 2,
+    "FDA News Releases": 2,
+    "CATO Institute": 2,
+    "TechCrunch Policy": 4,
+    "ProPublica Congress": 2,
+    "GovInfo Bills": 26,
+    "SEC Speeches": 1
+  },
+  "generated_at": "2026-04-24T22:09:11.407271+09:00",
+  "ontology": {
+    "repo": "PolicyRadar",
+    "category": "policy",
+    "ontology_version": "0.1.0",
+    "event_model_ids": [
+      "policy.enforcement_action",
+      "policy.policy_effective_date",
+      "policy.public_consultation",
+      "policy.regulatory_guidance"
+    ],
+    "event_model_mappings": {
+      "public_consultation": "policy.public_consultation",
+      "enforcement_action": "policy.enforcement_action",
+      "policy_effective_date": "policy.policy_effective_date",
+      "regulatory_guidance": "policy.regulatory_guidance"
+    },
+    "entity_type_hints": [
+      "policy.regulation",
+      "organization.agency"
+    ],
+    "source_role_ids": [
+      "context_only",
+      "primary_evidence"
+    ],
+    "source_role_mappings": {
+      "NIST News": "context_only",
+      "EPA Regulations": "primary_evidence"
+    },
+    "evidence_policy_ids": [
+      "traceable_url_required",
+      "official_confirmation_required",
+      "cross_reference_required"
+    ]
+  }
+}

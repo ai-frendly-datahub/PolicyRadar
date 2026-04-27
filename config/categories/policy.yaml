@@ -1,817 +1,1463 @@
-category_name: "policy"
-display_name: "정책/약관 레이더"
-
+category_name: policy
+display_name: 정책/약관 레이더
+data_quality:
+  priority: P0
+  primary_motion: compliance-risk
+  weakest_dimension: operational_depth
+  quality_outputs:
+    freshness_report: reports/policy_quality.json
+    dated_freshness_report_pattern: reports/policy_YYYYMMDD_quality.json
+    tracked_event_models:
+    - public_consultation
+    - enforcement_action
+    - policy_effective_date
+    - platform_policy_change
+    - security_classification_framework
+  event_models:
+  - public_consultation
+  - enforcement_action
+  - policy_effective_date
+  - platform_policy_change
+  - security_classification_framework
+  canonical_keys:
+    policy_document:
+      fields:
+      - source
+      - document_id
+      - title
+      - published
+    consultation:
+      fields:
+      - agency
+      - docket_id
+      - comment_deadline
+    enforcement_case:
+      fields:
+      - agency
+      - case_name
+      - action_date
+    platform_policy:
+      fields:
+      - platform
+      - policy_area
+      - effective_date
+  freshness_sla:
+    public_consultation:
+      max_age_days: 1
+      stale_after_days: 3
+    enforcement_action:
+      max_age_days: 1
+      stale_after_days: 3
+    policy_effective_date:
+      max_age_days: 2
+      stale_after_days: 7
+    platform_policy_change:
+      max_age_days: 2
+      stale_after_days: 5
+    security_classification_framework:
+      max_age_days: 7
+      stale_after_days: 30
+  quality_gates:
+  - 공식 N2SF 3등급과 내부 운영 오버레이를 분리해 저장
+  - 의견수렴 마감일·시행일·공포일·수집일을 별도 필드로 유지
+  - 집행/제재 신호는 공식 agency source 없이는 확정 상태로 병합하지 않음
+  - 정책 변경 diff는 원문 URL과 변경 적용일을 함께 보존
+source_backlog:
+  consultation_candidates:
+  - id: regulations_gov_documents_api
+    name: Regulations.gov Documents API
+    url: https://open.gsa.gov/api/regulationsgov/
+    layer: operational
+    event_model: public_consultation
+    activation_gate: API key, docket id mapping, comment deadline parser 검증 후 활성화
+  - id: korea_lawmaking_notice
+    name: 대한민국 입법예고/행정예고
+    url: https://www.lawmaking.go.kr/
+    layer: operational
+    event_model: public_consultation
+    activation_gate: 목록 selector, 부처명 정규화, 의견제출 마감일 parser 검증 후 활성화
+  enforcement_candidates:
+  - id: ftc_cases_and_proceedings
+    name: FTC Cases and Proceedings
+    url: https://www.ftc.gov/legal-library/browse/cases-proceedings
+    layer: official
+    event_model: enforcement_action
+    activation_gate: case id, order date, penalty/settlement 상태 parser 검증 후 활성화
+  - id: pipc_decision_archive
+    name: PIPC 심의·의결/처분 아카이브
+    url: https://www.pipc.go.kr/
+    layer: official
+    event_model: enforcement_action
+    activation_gate: 게시판별 개인정보 처리·첨부파일 접근·처분일 parser 검증 후 활성화
+  platform_policy_candidates:
+  - id: platform_policy_pages
+    name: Platform policy and developer policy pages
+    url: ''
+    layer: operational
+    event_model: platform_policy_change
+    activation_gate: robots/ToS, diff hash, effective date 추출 검증 후 활성화
 sources:
-  - name: "TechCrunch Policy"
-    type: "rss"
-    url: "https://techcrunch.com/feed/"
-  - name: "The Verge"
-    type: "rss"
-    url: "https://www.theverge.com/rss/index.xml"
-  - name: "EFF Updates"
-    type: "rss"
-    url: "https://www.eff.org/rss/updates.xml"
-  - name: "The Hill"
-    type: "rss"
-    url: "https://thehill.com/feed/"
-  - name: "White House Presidential Actions"
-    type: "rss"
-    url: "https://www.whitehouse.gov/presidential-actions/feed/"
-  - name: "SEC Press Releases"
-    type: "rss"
-    url: "https://www.sec.gov/news/pressreleases.rss"
-  - name: "SEC Speeches"
-    type: "rss"
-    url: "https://www.sec.gov/news/speeches.rss"
-  - name: "CFPB Newsroom"
-    type: "rss"
-    url: "https://www.consumerfinance.gov/about-us/newsroom/feed/"
-  - name: "NIST News"
-    type: "rss"
-    url: "https://www.nist.gov/news-events/news/rss.xml"
-  - name: "NIST Cybersecurity Insights"
-    type: "rss"
-    url: "https://www.nist.gov/blogs/cybersecurity-insights/rss.xml"
-  - name: "CDC Media Releases"
-    type: "rss"
-    url: "https://tools.cdc.gov/api/v2/resources/media/316422.rss"
-  - name: "GovInfo Bills"
-    type: "rss"
-    url: "https://www.govinfo.gov/rss/bills.xml"
-  - name: "GovInfo Federal Register"
-    type: "rss"
-    url: "https://www.govinfo.gov/rss/fr.xml"
-  - name: "GovInfo Public and Private Laws"
-    type: "rss"
-    url: "https://www.govinfo.gov/rss/plaw.xml"
-  - name: "GovInfo Congressional Reports"
-    type: "rss"
-    url: "https://www.govinfo.gov/rss/crpt.xml"
-
-  # === Reddit Policy Discussions ===
-  - name: "Reddit r/law"
-    type: "rss"
-    url: "https://www.reddit.com/r/law/.rss"
-  - name: "Reddit r/politics"
-    type: "rss"
-    url: "https://www.reddit.com/r/politics/.rss"
-  - name: "Reddit r/technology (Tech Policy)"
-    type: "rss"
-    url: "https://www.reddit.com/r/technology/.rss"
-
-  # === Government Legislative Tracking ===
-  # NOTE: 2026-04-06 RSS 404 오류로 비활성화
-  # - name: "GovTrack Bill Updates"
-  #   type: "rss"
-  #   url: "https://www.govtrack.us/events/events.rss?feeds=misc%3Aallbills"
-  - name: "ProPublica Congress"
-    type: "rss"
-    url: "https://www.propublica.org/feeds/propublica/main"
-  - name: "Senate Floor Activity"
-    type: "rss"
-    url: "https://www.senate.gov/legislative/LIS/floor_activity/floor_activity.rss"
-  # NOTE: 2026-04-06 RSS 404 오류로 비활성화
-  # - name: "House Floor Activity"
-  #   type: "rss"
-  #   url: "https://clerk.house.gov/Rss.aspx?Housefeed"
-  - name: "EPA Regulations"
-    type: "rss"
-    url: "https://www.epa.gov/newsreleases/search/rss/field_press_office/headquarters"
-  - name: "FDA News Releases"
-    type: "rss"
-    url: "https://www.fda.gov/about-fda/contact-fda/stay-informed/rss-feeds/press-releases/rss.xml"
-  - name: "FTC News"
-    type: "rss"
-    url: "https://www.ftc.gov/news-events/news/press-releases/feed"
-
-  # === Think Tanks & Policy Research ===
-  # NOTE: 2026-04-06 RSS 404 오류로 비활성화
-  # - name: "Urban Institute"
-  #   type: "rss"
-  #   url: "https://www.urban.org/rss.xml"
-  - name: "CATO Institute"
-    type: "rss"
-    url: "https://www.cato.org/rss/recent-opeds"
-  # NOTE: 2026-04-06 RSS 404 오류로 비활성화
-  # - name: "Heritage Foundation"
-  #   type: "rss"
-  #   url: "https://www.heritage.org/rss/commentary"
-  - name: "Center for American Progress"
-    type: "rss"
-    url: "https://www.americanprogress.org/feed/"
-  - name: "Brookings Institution"
-    type: "rss"
-    url: "https://www.brookings.edu/feed/"
-
-  # === International Legislation ===
-  - name: "EUR-Lex EU Legislation"
-    type: "rss"
-    url: "https://eur-lex.europa.eu/rss/s-TL.xml"
-  - name: "UK Parliament Bills"
-    type: "rss"
-    url: "https://bills.parliament.uk/rss/allbills.rss"
-  - name: "Canadian Parliament LEGISinfo"
-    type: "rss"
-    url: "https://www.parl.ca/legisinfo/en/rss/bills"
-  - name: "UN News - Law and Crime"
-    type: "rss"
-    url: "https://news.un.org/feed/subscribe/en/news/topic/law-and-crime-prevention/feed/rss.xml"
-
-  # === 한국 정책/규제 ===
-  - name: "금융위원회 보도자료"
-    type: "rss"
-    url: "https://www.fsc.go.kr/about/fsc_bbs_rss/?fid=0111"
-  - name: "금융위원회 보도설명"
-    type: "rss"
-    url: "https://www.fsc.go.kr/about/fsc_bbs_rss/?fid=0112"
-
+- name: TechCrunch Policy
+  type: rss
+  url: https://techcrunch.com/feed/
+  config:
+    include_keywords: &id001
+    - privacy
+    - personal data
+    - data protection
+    - data security
+    - surveillance
+    - gdpr
+    - ccpa
+    - regulation
+    - regulatory
+    - rulemaking
+    - public comment
+    - public consultation
+    - legislation
+    - bill
+    - congress
+    - senate
+    - resolution
+    - lawmaker
+    - executive order
+    - antitrust
+    - consumer protection
+    - terms of service
+    - user agreement
+    - policy update
+    - policy change
+    - platform policy
+    - community guidelines
+    - ai regulation
+    - ai act
+    - ai safety
+    - algorithmic
+    - automated decision
+    - national security
+    - foreign policy
+    - military
+    - defense
+    - sanction
+    - sanctions
+    - climate policy
+    - environmental policy
+    - labor
+    - employment
+    - worker rights
+    - enforcement
+    - settlement
+    - penalty
+    - ftc
+    - sec
+    - cfpb
+    - doj
+    - n2sf
+    - csap
+    - fedramp
+    - fips 199
+    event_model: editorial_coverage
+- name: The Verge
+  type: rss
+  url: https://www.theverge.com/rss/index.xml
+  config:
+    include_keywords: *id001
+    event_model: editorial_coverage
+- name: EFF Updates
+  type: rss
+  url: https://www.eff.org/rss/updates.xml
+  config:
+    event_model: editorial_coverage
+- name: The Hill
+  type: rss
+  url: https://thehill.com/feed/
+  config:
+    include_keywords: *id001
+    event_model: editorial_coverage
+- name: White House Presidential Actions
+  type: rss
+  url: https://www.whitehouse.gov/presidential-actions/feed/
+  trust_tier: T1_authoritative
+  content_type: executive_action
+  producer_role: government
+  collection_tier: C1_rss
+  info_purpose:
+  - executive_order
+  - policy_implementation
+  - policy_effective_date
+  notes: Official executive actions feed for immediate federal policy changes; quiet
+    windows of 4-5 days are common between posting bursts.
+  config:
+    event_model: policy_effective_date
+    canonical_key_fields:
+    - source
+    - title
+    - published
+    freshness_sla_days: 5
+    observed_date_field: published
+- name: SEC Press Releases
+  type: rss
+  url: https://www.sec.gov/news/pressreleases.rss
+  trust_tier: T1_authoritative
+  content_type: enforcement_notice
+  producer_role: government
+  collection_tier: C1_rss
+  info_purpose:
+  - enforcement
+  - regulatory_notice
+  - enforcement_action
+  notes: Official SEC enforcement and rule announcement feed; quiet windows of 5-6
+    days are common between announcement bursts.
+  config:
+    event_model: enforcement_action
+    canonical_key_fields:
+    - source
+    - title
+    - published
+    freshness_sla_days: 6
+    observed_date_field: published
+- name: SEC Speeches
+  type: rss
+  url: https://www.sec.gov/news/speeches.rss
+  trust_tier: T1_authoritative
+  content_type: guidance
+  producer_role: government
+  collection_tier: C1_rss
+  info_purpose:
+  - guidance
+  - policy_signal
+  - regulatory_guidance
+  notes: Official SEC speeches and interpretive guidance.
+  config:
+    event_model: regulatory_guidance
+    canonical_key_fields:
+    - source
+    - title
+    - published
+    freshness_sla_days: 7
+    observed_date_field: published
+- name: CFPB Newsroom
+  type: rss
+  url: https://www.consumerfinance.gov/about-us/newsroom/feed/
+  trust_tier: T1_authoritative
+  content_type: enforcement_notice
+  producer_role: government
+  collection_tier: C1_rss
+  info_purpose:
+  - enforcement_action
+  - consumer_finance_policy
+  notes: Official CFPB newsroom feed for broad consumer-finance policy context. Keep
+    enabled as official guidance context, but do not track it as an active enforcement
+    freshness source until a more enforcement-specific CFPB feed is verified.
+  config:
+    event_model: regulatory_guidance
+    canonical_key_fields:
+    - source
+    - title
+    - published
+    observed_date_field: published
+- name: NIST News
+  type: rss
+  url: https://www.nist.gov/news-events/news/rss.xml
+  trust_tier: T1_authoritative
+  content_type: guidance
+  producer_role: government
+  collection_tier: C1_rss
+  info_purpose:
+  - security_classification_framework
+  - regulatory_guidance
+  notes: Official NIST news for broad standards context. Keep framework keywords for
+    future collection, but do not track this general newsroom as an active security-framework
+    freshness source until a framework-specific feed is identified.
+  config:
+    event_model: regulatory_guidance
+    canonical_key_fields:
+    - source
+    - title
+    - published
+    observed_date_field: published
+    include_keywords: &id002
+    - n2sf
+    - 국가 망 보안체계
+    - 망 보안체계
+    - 망분리
+    - csap
+    - 클라우드 보안인증
+    - fedramp
+    - fedramp 20x
+    - fips 199
+    - nist csf
+    - csf 2.0
+    - cybersecurity framework
+    - cyber ai profile
+    - machine-readable
+    - continuous monitoring
+- name: NIST Cybersecurity Insights
+  type: rss
+  url: https://www.nist.gov/blogs/cybersecurity-insights/rss.xml
+  trust_tier: T1_authoritative
+  content_type: guidance
+  producer_role: government
+  collection_tier: C1_rss
+  info_purpose:
+  - security_classification_framework
+  - regulatory_guidance
+  notes: NIST cybersecurity guidance stream used as the standards interpretation layer.
+  config:
+    event_model: security_classification_framework
+    canonical_key_fields:
+    - source
+    - title
+    - published
+    freshness_sla_days: 45
+    observed_date_field: published
+    include_keywords: *id002
+- name: CDC Media Releases
+  type: rss
+  url: https://tools.cdc.gov/api/v2/resources/media/316422.rss
+  config:
+    event_model: editorial_coverage
+- name: GovInfo Bills
+  type: rss
+  url: https://www.govinfo.gov/rss/bills.xml
+  trust_tier: T1_authoritative
+  content_type: legislation
+  producer_role: government
+  collection_tier: C1_rss
+  info_purpose:
+  - bill_tracking
+  - legislative_pipeline
+  - legislative_action
+  notes: Official bills feed for new legislation entering the pipeline.
+  config:
+    event_model: legislative_action
+    canonical_key_fields:
+    - source
+    - title
+    - published
+    freshness_sla_days: 2
+    observed_date_field: published
+- name: GovInfo Federal Register
+  type: rss
+  url: https://www.govinfo.gov/rss/fr.xml
+  enabled: false
+  trust_tier: T1_authoritative
+  content_type: rulemaking
+  producer_role: government
+  collection_tier: C1_rss
+  info_purpose:
+  - public_comment
+  - rulemaking
+  - regulatory_notice
+  - public_consultation
+  notes: 'DISABLED 2026-04-24: official GovInfo Federal Register RSS currently serves
+    a stale 2025 snapshot rather than current notices. Keep disabled until a current
+    official endpoint or API contract is verified.'
+  config:
+    disabled_reason: official_feed_stalled_2025_snapshot
+    required_before_enable:
+    - current_official_federal_register_endpoint_or_api
+    - comment_deadline_parser_smoke
+    event_model: public_consultation
+    canonical_key_fields:
+    - source
+    - title
+    - published
+    freshness_sla_days: 1
+    observed_date_field: published
+- name: GovInfo Public and Private Laws
+  type: rss
+  url: https://www.govinfo.gov/rss/plaw.xml
+  enabled: false
+  trust_tier: T1_authoritative
+  content_type: enacted_law
+  producer_role: government
+  collection_tier: C1_rss
+  info_purpose:
+  - policy_effective_date
+  - law_enactment
+  notes: 'DISABLED 2026-04-24: official GovInfo public/private laws RSS currently
+    serves an outdated 2025 snapshot. Keep disabled until a current official endpoint
+    or API contract is verified.'
+  config:
+    disabled_reason: official_feed_stalled_2025_snapshot
+    required_before_enable:
+    - current_official_public_law_endpoint_or_api
+    - policy_effective_date_parser_smoke
+    event_model: policy_effective_date
+    canonical_key_fields:
+    - source
+    - title
+    - published
+    freshness_sla_days: 2
+    observed_date_field: published
+- name: GovInfo Congressional Reports
+  type: rss
+  url: https://www.govinfo.gov/rss/crpt.xml
+  trust_tier: T1_authoritative
+  content_type: legislative_report
+  producer_role: government
+  collection_tier: C1_rss
+  info_purpose:
+  - legislative_action
+  - committee_report
+  notes: Official congressional reports feed used to trace bill movement and committee
+    signals.
+  config:
+    event_model: legislative_action
+    canonical_key_fields:
+    - source
+    - title
+    - published
+    freshness_sla_days: 3
+    observed_date_field: published
+- name: Reddit r/law
+  type: rss
+  url: https://www.reddit.com/r/law/.rss
+  config:
+    event_model: editorial_coverage
+- name: Reddit r/politics
+  type: rss
+  url: https://www.reddit.com/r/politics/.rss
+  config:
+    include_keywords: *id001
+    event_model: editorial_coverage
+- name: Reddit r/technology (Tech Policy)
+  type: rss
+  url: https://www.reddit.com/r/technology/.rss
+  config:
+    include_keywords: *id001
+    event_model: editorial_coverage
+- name: ProPublica Congress
+  type: rss
+  url: https://www.propublica.org/feeds/propublica/main
+  config:
+    include_keywords: *id001
+    event_model: editorial_coverage
+- name: Senate Floor Activity
+  type: rss
+  url: https://www.senate.gov/legislative/LIS/floor_activity/floor_activity.rss
+  enabled: false
+  notes: 'DISABLED 2026-04-14: legacy RSS endpoint returns 403; keep cataloged until
+    a stable official floor activity feed/browser contract is verified.'
+  config:
+    disabled_reason: legacy_rss_forbidden_403
+    required_before_enable:
+    - stable_official_floor_activity_feed_or_browser_contract
+- name: EPA Regulations
+  type: rss
+  url: https://www.epa.gov/taxonomy/term/226129/feed
+  trust_tier: T1_authoritative
+  content_type: regulatory_notice
+  producer_role: government
+  collection_tier: C1_rss
+  info_purpose:
+  - public_consultation
+  - enforcement_action
+  - environmental_policy
+  notes: Official EPA regulatory releases and enforcement-relevant announcements;
+    quiet windows of 2-3 days are common between updates.
+  config:
+    bypass_crawl_health: true
+    event_model: public_consultation
+    canonical_key_fields:
+    - source
+    - title
+    - published
+    freshness_sla_days: 3
+    observed_date_field: published
+- name: FDA News Releases
+  type: rss
+  url: https://www.fda.gov/about-fda/contact-fda/stay-informed/rss-feeds/press-releases/rss.xml
+  trust_tier: T1_authoritative
+  content_type: regulatory_notice
+  producer_role: government
+  collection_tier: C1_rss
+  info_purpose:
+  - enforcement_action
+  - policy_effective_date
+  - public_health_policy
+  notes: Official FDA releases for policy changes, recalls, and enforcement-relevant
+    notices.
+  config:
+    event_model: enforcement_action
+    canonical_key_fields:
+    - source
+    - title
+    - published
+    freshness_sla_days: 5
+    observed_date_field: published
+- name: FTC News
+  type: rss
+  url: https://www.ftc.gov/feeds/press-release.xml
+  enabled: false
+  trust_tier: T1_authoritative
+  content_type: enforcement_notice
+  producer_role: government
+  collection_tier: C1_rss
+  info_purpose:
+  - enforcement
+  - consumer_protection
+  - enforcement_action
+  notes: 'DISABLED 2026-04-14: official FTC RSS returns 403 apology HTML from this
+    runner; keep FTC Cases and Proceedings in source backlog until an accessible official
+    feed/browser contract is verified.'
+  config:
+    disabled_reason: official_rss_blocked_403
+    required_before_enable:
+    - accessible_official_feed_or_browser_contract
+    - case_order_date_parser_smoke
+    event_model: enforcement_action
+    canonical_key_fields:
+    - source
+    - title
+    - published
+    freshness_sla_days: 2
+    observed_date_field: published
+- name: CATO Institute
+  type: rss
+  url: https://www.cato.org/rss/recent-opeds
+  config:
+    event_model: editorial_coverage
+- name: Center for American Progress
+  type: rss
+  url: https://www.americanprogress.org/feed/
+  enabled: false
+  notes: 'DISABLED 2026-04-14: non-authoritative context feed is crawl-health disabled;
+    T1 official sources remain preferred for operational policy events.'
+  config:
+    disabled_reason: non_authoritative_context_feed_crawl_health_disabled
+- name: Brookings Institution
+  type: rss
+  url: https://www.brookings.edu/feed/
+  config:
+    event_model: editorial_coverage
+- name: EUR-Lex EU Legislation
+  type: rss
+  url: https://eur-lex.europa.eu/rss/s-TL.xml
+  trust_tier: T1_authoritative
+  content_type: legislation
+  producer_role: government
+  collection_tier: C1_rss
+  info_purpose:
+  - legislative_action
+  - policy_effective_date
+  notes: Official EU legal feed for adopted and pending legislative changes.
+  config:
+    bypass_crawl_health: true
+    event_model: legislative_action
+    canonical_key_fields:
+    - source
+    - title
+    - published
+    freshness_sla_days: 2
+    observed_date_field: published
+- name: UK Parliament Bills
+  type: rss
+  url: https://bills.parliament.uk/rss/allbills.rss
+  trust_tier: T1_authoritative
+  content_type: legislation
+  producer_role: government
+  collection_tier: C1_rss
+  info_purpose:
+  - legislative_action
+  - policy_effective_date
+  notes: Official UK Parliament bill tracker feed.
+  config:
+    event_model: legislative_action
+    canonical_key_fields:
+    - source
+    - title
+    - published
+    freshness_sla_days: 2
+    observed_date_field: published
+- name: Canadian Parliament LEGISinfo
+  type: rss
+  url: https://www.parl.ca/legisinfo/en/rss/bills
+  trust_tier: T1_authoritative
+  content_type: legislation
+  producer_role: government
+  collection_tier: C1_rss
+  info_purpose:
+  - legislative_action
+  - policy_effective_date
+  notes: Official Canadian Parliament bill tracker feed.
+  config:
+    event_model: legislative_action
+    canonical_key_fields:
+    - source
+    - title
+    - published
+    freshness_sla_days: 2
+    observed_date_field: published
+- name: UN News - Law and Crime
+  type: rss
+  url: https://news.un.org/feed/subscribe/en/news/topic/law-and-crime-prevention/feed/rss.xml
+  trust_tier: T2_professional
+  content_type: policy_news
+  producer_role: intergovernmental
+  collection_tier: C1_rss
+  info_purpose:
+  - policy_signal
+  - international_law
+  notes: UN topic feed used as an international policy signal, not a domestic enforcement
+    source.
+  config:
+    event_model: editorial_coverage
+- name: 금융위원회 보도자료
+  type: rss
+  url: https://www.fsc.go.kr/about/fsc_bbs_rss/?fid=0111
+  trust_tier: T1_authoritative
+  content_type: regulatory_notice
+  producer_role: government
+  collection_tier: C1_rss
+  info_purpose:
+  - regulatory_notice
+  - financial_policy
+  - policy_effective_date
+  notes: Official FSC press releases with policy rollout and enforcement context.
+  config:
+    event_model: policy_effective_date
+    canonical_key_fields:
+    - source
+    - title
+    - published
+    freshness_sla_days: 2
+    observed_date_field: published
+- name: 금융위원회 보도설명
+  type: rss
+  url: https://www.fsc.go.kr/about/fsc_bbs_rss/?fid=0112
+  trust_tier: T1_authoritative
+  content_type: guidance
+  producer_role: government
+  collection_tier: C1_rss
+  info_purpose:
+  - guidance
+  - clarification
+  - financial_policy
+  - regulatory_guidance
+  notes: Official FSC explanations and clarifications for market participants.
+  config:
+    event_model: regulatory_guidance
+    canonical_key_fields:
+    - source
+    - title
+    - published
+    freshness_sla_days: 2
+    observed_date_field: published
+- name: PIPC 보도자료
+  type: javascript
+  url: https://www.pipc.go.kr/np/cop/bbs/selectBoardList.do?bbsId=BS074
+  trust_tier: T1_authoritative
+  content_type: enforcement_notice
+  producer_role: government
+  collection_tier: C3_html_js
+  info_purpose:
+  - enforcement
+  - privacy_policy
+  - guidance
+  - enforcement_action
+  - security_classification_framework
+  notes: Korean privacy regulator announcements, sanctions, and policy implementation
+    notices.
+  config:
+    event_model: enforcement_action
+    canonical_key_fields:
+    - source
+    - title
+    - collected_at
+    freshness_sla_days: 1
+    observed_date_field: collected_at
+    wait_for: body
+    fallback_wait_for: body
+    timeout: 20000
+    bypass_crawl_health: true
+    navigation_retries: 3
+    navigation_retry_delay_ms: 2000
+    link_selector: a[href*='selectBoardArticle.do'][href*='BS074']
+- name: KISA 보안공지
+  type: javascript
+  url: https://www.kisa.or.kr/401
+  trust_tier: T1_authoritative
+  content_type: regulatory_notice
+  producer_role: government
+  collection_tier: C3_html_js
+  info_purpose:
+  - guidance
+  - regulatory_notice
+  - security_policy
+  - security_classification_framework
+  notes: KISA notices used for public security-framework signals such as N2SF, CSAP,
+    FIPS, and FedRAMP context. Official N2SF C/S/O grading remains separate from internal
+    operational overlays.
+  config:
+    event_model: security_classification_framework
+    canonical_key_fields:
+    - source
+    - title
+    - collected_at
+    freshness_sla_days: 30
+    observed_date_field: collected_at
+    wait_for: body
+    timeout: 20000
+    bypass_crawl_health: true
+    link_selector: a[href*='/401/form']
+    include_keywords: *id002
 entities:
-  - name: "Privacy"
-    display_name: "개인정보 정책"
-    keywords:
-      # English keywords
-      - "privacy"
-      - "privacy policy"
-      - "data privacy"
-      - "data protection"
-      - "personal data"
-      - "data governance"
-      - "data security"
-      - "surveillance"
-      - "consent"
-      - "gdpr"
-      - "ccpa"
-      - "biometric data"
-      - "facial recognition"
-      - "data breach"
-      - "data retention"
-      - "right to erasure"
-      - "data portability"
-      - "cross-border data"
-      - "data localization"
-      # Korean keywords
-      - "개인정보"
-      - "개인정보보호"
-      - "개인정보보호법"
-      - "개인정보처리"
-      - "정보주체"
-      - "개인정보위원회"
-      - "개인정보영향평가"
-      - "가명정보"
-      - "익명정보"
-      - "민감정보"
-      - "고유식별정보"
-      - "정보통신망법"
-      - "개인정보유출"
-      - "개인정보침해"
-      - "동의"
-      - "수집이용"
-      - "제3자 제공"
-      - "위탁"
-      - "파기"
-      - "열람권"
-      - "정정권"
-      - "삭제권"
-      - "처리정지권"
-      - "마이데이터"
-      - "데이터3법"
-  - name: "TermsChange"
-    display_name: "약관 변경"
-    keywords:
-      # English keywords
-      - "terms"
-      - "terms of service"
-      - "user agreement"
-      - "terms update"
-      - "policy update"
-      - "policy change"
-      - "guidelines"
-      - "notice"
-      - "service agreement"
-      - "end user license"
-      - "acceptable use"
-      - "community guidelines"
-      # Korean keywords
-      - "약관 변경"
-      - "이용약관"
-      - "서비스 약관"
-      - "약관 개정"
-      - "약관 시행"
-      - "계약조건"
-      - "표준약관"
-      - "불공정약관"
-      - "약관규제법"
-      - "전자상거래약관"
-      - "이용규정"
-      - "운영정책"
-      - "서비스정책"
-      - "커뮤니티 가이드라인"
-      - "콘텐츠정책"
-      - "광고정책"
-  - name: "Regulation"
-    display_name: "규제/법률"
-    keywords:
-      # English keywords
-      - "policy"
-      - "government"
-      - "federal"
-      - "agency"
-      - "commission"
-      - "law"
-      - "legislation"
-      - "legislative"
-      - "bill"
-      - "act"
-      - "rule"
-      - "rulemaking"
-      - "executive order"
-      - "congress"
-      - "senate"
-      - "house"
-      - "guidance"
-      - "enforcement"
-      - "regulation"
-      - "regulatory"
-      - "antitrust"
-      - "compliance"
-      - "regulatory framework"
-      - "oversight"
-      - "deregulation"
-      - "sanctions"
-      - "penalty"
-      - "fine"
-      # Korean keywords - 정책 및 규제 기본
-      - "정책"
-      - "규제"
-      - "법률"
-      - "법안"
-      - "법령"
-      - "시행령"
-      - "시행규칙"
-      - "고시"
-      - "지침"
-      - "훈령"
-      - "예규"
-      - "규정"
-      - "조례"
-      - "규칙"
-      # Korean keywords - 정책 분야 (Policy Areas)
-      - "경제정책"
-      - "산업정책"
-      - "노동정책"
-      - "복지정책"
-      - "교육정책"
-      - "환경정책"
-      - "외교정책"
-      - "안보정책"
-      - "통상정책"
-      - "조세정책"
-      - "재정정책"
-      - "통화정책"
-      # Korean keywords - 정책 단계 (Policy Stages)
-      - "입법예고"
-      - "공청회"
-      - "국회심의"
-      - "법안발의"
-      - "위원회심사"
-      - "본회의표결"
-      - "공포"
-      - "시행"
-      - "규제영향평가"
-      - "정책평가"
-      # Korean keywords - 정책 유형 (Policy Types)
-      - "규제완화"
-      - "규제강화"
-      - "세제개편"
-      - "예산편성"
-      - "재정지원"
-      - "보조금"
-      - "지원금"
-      - "인센티브"
-      - "규제개혁"
-      - "정책전환"
-      # Korean keywords - 입법/국회
-      - "국회"
-      - "본회의"
-      - "상임위원회"
-      - "법사위"
-      - "의결"
-      - "통과"
-      - "발의"
-      - "개정"
-      - "제정"
-      - "폐지"
-      # Korean keywords - 정부부처 (Government Stakeholders)
-      - "기획재정부"
-      - "기재부"
-      - "과학기술정보통신부"
-      - "과기부"
-      - "산업통상자원부"
-      - "산업부"
-      - "국토교통부"
-      - "국토부"
-      - "보건복지부"
-      - "복지부"
-      - "환경부"
-      - "고용노동부"
-      - "노동부"
-      - "교육부"
-      - "외교부"
-      - "국방부"
-      - "법무부"
-      - "행정안전부"
-      - "행안부"
-      - "문화체육관광부"
-      - "문체부"
-      - "농림축산식품부"
-      - "농식품부"
-      - "해양수산부"
-      - "해수부"
-      - "중소벤처기업부"
-      - "중기부"
-      - "여성가족부"
-      - "금융위원회"
-      - "금융위"
-      - "공정거래위원회"
-      - "공정위"
-      - "방송통신위원회"
-      - "방통위"
-      - "개인정보보호위원회"
-      - "개인정보위"
-      - "국무총리실"
-      - "국무조정실"
-      # Korean keywords - 규제 유형
-      - "독점"
-      - "공정거래"
-      - "규제혁신"
-      - "규제샌드박스"
-      - "네거티브규제"
-      - "사전규제"
-      - "사후규제"
-      - "자율규제"
-      - "과징금"
-      - "과태료"
-      - "시정명령"
-      - "영업정지"
-      - "허가"
-      - "인가"
-      - "등록"
-      - "신고"
-  - name: "Platform"
-    display_name: "플랫폼 정책"
-    keywords:
-      # Major platforms - English
-      - "google"
-      - "apple"
-      - "meta"
-      - "amazon"
-      - "microsoft"
-      - "twitter"
-      - "tiktok"
-      - "facebook"
-      - "instagram"
-      - "youtube"
-      - "netflix"
-      - "spotify"
-      - "uber"
-      - "airbnb"
-      - "openai"
-      - "chatgpt"
-      # Platform regulation terms
-      - "app store"
-      - "play store"
-      - "digital markets act"
-      - "digital services act"
-      - "platform regulation"
-      - "gatekeeper"
-      - "interoperability"
-      - "self-preferencing"
-      - "app sideloading"
-      # Korean platforms and terms
-      - "카카오"
-      - "네이버"
-      - "쿠팡"
-      - "배달의민족"
-      - "토스"
-      - "플랫폼"
-      - "플랫폼규제"
-      - "플랫폼법"
-      - "온라인플랫폼"
-      - "앱마켓"
-      - "인앱결제"
-      - "수수료"
-      - "갑을관계"
-      - "대형마트"
-      - "이커머스"
-  - name: "ConsumerRights"
-    display_name: "소비자 권리"
-    keywords:
-      # English keywords
-      - "consumer"
-      - "consumer protection"
-      - "consumer rights"
-      - "unfair"
-      - "deceptive"
-      - "transparency"
-      - "accountability"
-      - "refund policy"
-      - "class action"
-      - "warranty"
-      - "recall"
-      - "product safety"
-      - "false advertising"
-      - "misleading"
-      - "consumer fraud"
-      # Korean keywords
-      - "소비자 보호"
-      - "소비자 권리"
-      - "환불 정책"
-      - "소비자기본법"
-      - "소비자원"
-      - "한국소비자원"
-      - "소비자분쟁"
-      - "피해구제"
-      - "피해보상"
-      - "청약철회"
-      - "환불"
-      - "교환"
-      - "반품"
-      - "하자"
-      - "품질보증"
-      - "AS"
-      - "리콜"
-      - "불량"
-      - "허위광고"
-      - "과대광고"
-      - "부당표시"
-      - "가격담합"
-      - "끼워팔기"
-      - "집단소송"
-      - "징벌적손해배상"
-  - name: "Legislation"
-    display_name: "입법"
-    keywords:
-      # English keywords
-      - "legislation"
-      - "legislative"
-      - "bill"
-      - "act"
-      - "congress"
-      - "senate"
-      - "house"
-      - "parliament"
-      - "lawmaker"
-      - "bipartisan"
-      - "amendment"
-      - "filibuster"
-      - "veto"
-      - "override"
-      - "committee"
-      - "hearing"
-      - "testimony"
-      - "lobbying"
-      - "public comment"
-      - "notice of proposed rulemaking"
-      - "final rule"
-      # Korean keywords - 기본
-      - "법안"
-      - "입법"
-      - "국회"
-      - "국회의원"
-      - "의원발의"
-      - "정부발의"
-      - "대표발의"
-      - "공동발의"
-      # Korean keywords - 입법 절차/단계 (Legislative Stages)
-      - "입법예고"
-      - "사전입법예고"
-      - "행정예고"
-      - "규제심사"
-      - "법제처심사"
-      - "국무회의"
-      - "대통령재가"
-      - "관보게재"
-      - "법령공포"
-      - "국회제출"
-      - "국회심의"
-      - "위원회회부"
-      - "법안심사"
-      - "의안심사"
-      - "대안"
-      - "수정안"
-      - "원안"
-      - "1독회"
-      - "2독회"
-      - "위원회"
-      - "소위원회"
-      - "전문위원"
-      - "검토보고서"
-      - "공청회"
-      - "청문회"
-      - "국정감사"
-      - "대정부질문"
-      - "예산안"
-      - "추경"
-      - "임시국회"
-      - "정기국회"
-      - "본회의"
-      - "의결정족수"
-      - "재적의원"
-      - "출석의원"
-  - name: "ExecutiveOrder"
-    display_name: "행정명령"
-    keywords:
-      # English keywords
-      - "executive order"
-      - "presidential"
-      - "directive"
-      - "memorandum"
-      - "proclamation"
-      - "executive action"
-      - "signing statement"
-      - "white house"
-      - "oval office"
-      - "cabinet"
-      - "administration"
-      # Korean keywords
-      - "행정명령"
-      - "대통령령"
-      - "시행령"
-      - "국무회의"
-      - "국무총리"
-      - "국무위원"
-      - "행정부"
-      - "정부"
-      - "청와대"
-      - "용산"
-      - "대통령비서실"
-      - "국정과제"
-      - "국정운영"
-      - "국정기조"
-      - "인사"
-      - "임명"
-      - "해임"
-      - "사면"
-      - "특사"
-      - "긴급명령"
-      - "계엄"
-  - name: "JudicialRuling"
-    display_name: "사법 판결"
-    keywords:
-      # English keywords
-      - "court"
-      - "ruling"
-      - "verdict"
-      - "injunction"
-      - "settlement"
-      - "supreme court"
-      - "appellate"
-      - "district court"
-      - "judge"
-      - "justice"
-      - "lawsuit"
-      - "litigation"
-      - "plaintiff"
-      - "defendant"
-      - "damages"
-      - "precedent"
-      - "dissent"
-      - "opinion"
-      - "constitutional"
-      - "unconstitutional"
-      # Korean keywords
-      - "판결"
-      - "법원"
-      - "소송"
-      - "대법원"
-      - "헌법재판소"
-      - "헌재"
-      - "고등법원"
-      - "지방법원"
-      - "가처분"
-      - "집행정지"
-      - "기각"
-      - "인용"
-      - "각하"
-      - "항소"
-      - "상고"
-      - "원고"
-      - "피고"
-      - "손해배상"
-      - "배상명령"
-      - "위헌"
-      - "합헌"
-      - "헌법불합치"
-      - "판례"
-      - "선고"
-      - "공판"
-      - "재판"
-      - "변호사"
-      - "검찰"
-      - "검사"
-      - "기소"
-      - "불기소"
-      - "구속"
-      - "영장"
-
-  # === NEW: AI/Tech Policy Entity ===
-  - name: "AIPolicy"
-    display_name: "AI/기술 정책"
-    keywords:
-      # English keywords
-      - "artificial intelligence"
-      - "ai regulation"
-      - "ai act"
-      - "ai governance"
-      - "ai safety"
-      - "ai ethics"
-      - "machine learning"
-      - "algorithmic"
-      - "automated decision"
-      - "facial recognition"
-      - "deepfake"
-      - "generative ai"
-      - "large language model"
-      - "ai liability"
-      - "ai transparency"
-      - "explainable ai"
-      - "ai bias"
-      - "ai audit"
-      # Korean keywords
-      - "인공지능"
-      - "AI규제"
-      - "AI법"
-      - "AI윤리"
-      - "AI안전"
-      - "알고리즘"
-      - "자동화의사결정"
-      - "딥페이크"
-      - "생성형AI"
-      - "챗봇"
-      - "AI거버넌스"
-      - "AI책임"
-      - "AI투명성"
-      - "AI편향"
-      - "AI감사"
-      - "디지털전환"
-      - "디지털뉴딜"
-      - "메타버스"
-      - "블록체인"
-      - "NFT"
-      - "가상자산"
-      - "암호화폐"
-      - "핀테크"
-      - "빅데이터"
-      - "클라우드"
-
-  # === NEW: Financial Regulation Entity ===
-  - name: "FinancialRegulation"
-    display_name: "금융 규제"
-    keywords:
-      # English keywords
-      - "financial regulation"
-      - "banking"
-      - "securities"
-      - "capital markets"
-      - "insurance"
-      - "fintech"
-      - "cryptocurrency"
-      - "stablecoin"
-      - "cbdc"
-      - "aml"
-      - "kyc"
-      - "money laundering"
-      - "terrorist financing"
-      - "sanctions"
-      - "fed"
-      - "sec"
-      - "cftc"
-      - "cfpb"
-      - "fdic"
-      - "basel"
-      - "systemic risk"
-      # Korean keywords
-      - "금융규제"
-      - "금융정책"
-      - "금융감독"
-      - "금융감독원"
-      - "금감원"
-      - "금융위"
-      - "한국은행"
-      - "기준금리"
-      - "통화정책"
-      - "은행법"
-      - "자본시장법"
-      - "보험업법"
-      - "여신전문금융업법"
-      - "전자금융거래법"
-      - "가상자산법"
-      - "특금법"
-      - "자금세탁"
-      - "테러자금"
-      - "건전성규제"
-      - "유동성"
-      - "자기자본"
-      - "BIS비율"
-      - "예금자보호"
-      - "금융소비자보호"
-      - "불완전판매"
-      - "금융사기"
-
-  # === NEW: Environmental Policy Entity ===
-  - name: "EnvironmentalPolicy"
-    display_name: "환경 정책"
-    keywords:
-      # English keywords
-      - "climate"
-      - "climate change"
-      - "carbon"
-      - "emissions"
-      - "greenhouse gas"
-      - "net zero"
-      - "renewable energy"
-      - "clean energy"
-      - "epa"
-      - "paris agreement"
-      - "cop"
-      - "sustainability"
-      - "esg"
-      - "pollution"
-      - "waste"
-      - "recycling"
-      - "plastic"
-      - "biodiversity"
-      # Korean keywords
-      - "환경정책"
-      - "기후변화"
-      - "탄소중립"
-      - "탄소배출권"
-      - "온실가스"
-      - "신재생에너지"
-      - "태양광"
-      - "풍력"
-      - "전기차"
-      - "수소"
-      - "그린뉴딜"
-      - "ESG"
-      - "지속가능"
-      - "친환경"
-      - "미세먼지"
-      - "대기오염"
-      - "수질오염"
-      - "폐기물"
-      - "재활용"
-      - "플라스틱"
-      - "생태계"
-      - "생물다양성"
-      - "환경영향평가"
-
-  # === NEW: Labor Policy Entity ===
-  - name: "LaborPolicy"
-    display_name: "노동 정책"
-    keywords:
-      # English keywords
-      - "labor"
-      - "employment"
-      - "minimum wage"
-      - "worker rights"
-      - "union"
-      - "collective bargaining"
-      - "workplace safety"
-      - "osha"
-      - "nlrb"
-      - "gig economy"
-      - "independent contractor"
-      - "overtime"
-      - "paid leave"
-      - "discrimination"
-      - "harassment"
-      # Korean keywords
-      - "노동정책"
-      - "고용정책"
-      - "근로기준법"
-      - "최저임금"
-      - "임금"
-      - "노동조합"
-      - "노사관계"
-      - "단체협약"
-      - "파업"
-      - "쟁의"
-      - "해고"
-      - "부당해고"
-      - "비정규직"
-      - "정규직"
-      - "플랫폼노동"
-      - "긱워커"
-      - "산업안전"
-      - "산재"
-      - "근로시간"
-      - "52시간"
-      - "연장근무"
-      - "야간근무"
-      - "휴일"
-      - "연차"
-      - "출산휴가"
-      - "육아휴직"
-      - "차별금지"
-      - "직장내괴롭힘"
+- name: Privacy
+  display_name: 개인정보 정책
+  keywords:
+  - privacy
+  - privacy policy
+  - data privacy
+  - data protection
+  - personal data
+  - data governance
+  - data security
+  - surveillance
+  - consent
+  - gdpr
+  - ccpa
+  - biometric data
+  - facial recognition
+  - data breach
+  - data retention
+  - right to erasure
+  - data portability
+  - cross-border data
+  - data localization
+  - 개인정보
+  - 개인정보보호
+  - 개인정보보호법
+  - 개인정보처리
+  - 정보주체
+  - 개인정보위원회
+  - 개인정보영향평가
+  - 가명정보
+  - 익명정보
+  - 민감정보
+  - 고유식별정보
+  - 정보통신망법
+  - 개인정보유출
+  - 개인정보침해
+  - 동의
+  - 수집이용
+  - 제3자 제공
+  - 위탁
+  - 파기
+  - 열람권
+  - 정정권
+  - 삭제권
+  - 처리정지권
+  - 마이데이터
+  - 데이터3법
+- name: TermsChange
+  display_name: 약관 변경
+  keywords:
+  - terms of service
+  - user agreement
+  - terms update
+  - policy update
+  - policy change
+  - guidelines
+  - notice
+  - service agreement
+  - end user license
+  - acceptable use
+  - community guidelines
+  - 약관 변경
+  - 이용약관
+  - 서비스 약관
+  - 약관 개정
+  - 약관 시행
+  - 계약조건
+  - 표준약관
+  - 불공정약관
+  - 약관규제법
+  - 전자상거래약관
+  - 이용규정
+  - 운영정책
+  - 서비스정책
+  - 커뮤니티 가이드라인
+  - 콘텐츠정책
+  - 광고정책
+- name: Regulation
+  display_name: 규제/법률
+  keywords:
+  - policy
+  - government
+  - federal
+  - agency
+  - commission
+  - law
+  - legislation
+  - legislative
+  - bill
+  - act
+  - rule
+  - rulemaking
+  - executive order
+  - congress
+  - senate
+  - house
+  - guidance
+  - enforcement
+  - regulation
+  - regulatory
+  - antitrust
+  - compliance
+  - regulatory framework
+  - oversight
+  - deregulation
+  - sanctions
+  - penalty
+  - fine
+  - foreign policy
+  - national security
+  - military
+  - defense
+  - 정책
+  - 규제
+  - 법률
+  - 법안
+  - 법령
+  - 시행령
+  - 시행규칙
+  - 고시
+  - 지침
+  - 훈령
+  - 예규
+  - 규정
+  - 조례
+  - 규칙
+  - 경제정책
+  - 산업정책
+  - 노동정책
+  - 복지정책
+  - 교육정책
+  - 환경정책
+  - 외교정책
+  - 안보정책
+  - 통상정책
+  - 조세정책
+  - 재정정책
+  - 통화정책
+  - 입법예고
+  - 공청회
+  - 국회심의
+  - 법안발의
+  - 위원회심사
+  - 본회의표결
+  - 공포
+  - 시행
+  - 규제영향평가
+  - 정책평가
+  - 규제완화
+  - 규제강화
+  - 세제개편
+  - 예산편성
+  - 재정지원
+  - 보조금
+  - 지원금
+  - 인센티브
+  - 규제개혁
+  - 정책전환
+  - 국회
+  - 본회의
+  - 상임위원회
+  - 법사위
+  - 의결
+  - 통과
+  - 발의
+  - 개정
+  - 제정
+  - 폐지
+  - 기획재정부
+  - 기재부
+  - 과학기술정보통신부
+  - 과기부
+  - 산업통상자원부
+  - 산업부
+  - 국토교통부
+  - 국토부
+  - 보건복지부
+  - 복지부
+  - 환경부
+  - 고용노동부
+  - 노동부
+  - 교육부
+  - 외교부
+  - 국방부
+  - 법무부
+  - 행정안전부
+  - 행안부
+  - 문화체육관광부
+  - 문체부
+  - 농림축산식품부
+  - 농식품부
+  - 해양수산부
+  - 해수부
+  - 중소벤처기업부
+  - 중기부
+  - 여성가족부
+  - 금융위원회
+  - 금융위
+  - 공정거래위원회
+  - 공정위
+  - 방송통신위원회
+  - 방통위
+  - 개인정보보호위원회
+  - 개인정보위
+  - 국무총리실
+  - 국무조정실
+  - 독점
+  - 공정거래
+  - 규제혁신
+  - 규제샌드박스
+  - 네거티브규제
+  - 사전규제
+  - 사후규제
+  - 자율규제
+  - 과징금
+  - 과태료
+  - 시정명령
+  - 영업정지
+  - 허가
+  - 인가
+  - 등록
+  - 신고
+- name: Platform
+  display_name: 플랫폼 정책
+  keywords:
+  - google
+  - apple
+  - meta
+  - amazon
+  - microsoft
+  - twitter
+  - tiktok
+  - facebook
+  - instagram
+  - youtube
+  - netflix
+  - spotify
+  - uber
+  - airbnb
+  - openai
+  - chatgpt
+  - app store
+  - play store
+  - digital markets act
+  - digital services act
+  - platform regulation
+  - gatekeeper
+  - interoperability
+  - self-preferencing
+  - app sideloading
+  - 카카오
+  - 네이버
+  - 쿠팡
+  - 배달의민족
+  - 토스
+  - 플랫폼
+  - 플랫폼규제
+  - 플랫폼법
+  - 온라인플랫폼
+  - 앱마켓
+  - 인앱결제
+  - 수수료
+  - 갑을관계
+  - 대형마트
+  - 이커머스
+- name: ConsumerRights
+  display_name: 소비자 권리
+  keywords:
+  - consumer
+  - consumer protection
+  - consumer rights
+  - unfair
+  - deceptive
+  - transparency
+  - accountability
+  - refund policy
+  - class action
+  - warranty
+  - recall
+  - product safety
+  - false advertising
+  - misleading
+  - consumer fraud
+  - 소비자 보호
+  - 소비자 권리
+  - 환불 정책
+  - 소비자기본법
+  - 소비자원
+  - 한국소비자원
+  - 소비자분쟁
+  - 피해구제
+  - 피해보상
+  - 청약철회
+  - 환불
+  - 교환
+  - 반품
+  - 하자
+  - 품질보증
+  - A/S
+  - 리콜
+  - 불량
+  - 허위광고
+  - 과대광고
+  - 부당표시
+  - 가격담합
+  - 끼워팔기
+  - 집단소송
+  - 징벌적손해배상
+- name: Legislation
+  display_name: 입법
+  keywords:
+  - legislation
+  - legislative
+  - bill
+  - act
+  - congress
+  - senate
+  - house
+  - parliament
+  - lawmaker
+  - bipartisan
+  - amendment
+  - filibuster
+  - veto
+  - override
+  - committee
+  - hearing
+  - testimony
+  - lobbying
+  - public comment
+  - notice of proposed rulemaking
+  - final rule
+  - 법안
+  - 입법
+  - 국회
+  - 국회의원
+  - 의원발의
+  - 정부발의
+  - 대표발의
+  - 공동발의
+  - 입법예고
+  - 사전입법예고
+  - 행정예고
+  - 규제심사
+  - 법제처심사
+  - 국무회의
+  - 대통령재가
+  - 관보게재
+  - 법령공포
+  - 국회제출
+  - 국회심의
+  - 위원회회부
+  - 법안심사
+  - 의안심사
+  - 대안
+  - 수정안
+  - 원안
+  - 1독회
+  - 2독회
+  - 위원회
+  - 소위원회
+  - 전문위원
+  - 검토보고서
+  - 공청회
+  - 청문회
+  - 국정감사
+  - 대정부질문
+  - 예산안
+  - 추경
+  - 임시국회
+  - 정기국회
+  - 본회의
+  - 의결정족수
+  - 재적의원
+  - 출석의원
+- name: ExecutiveOrder
+  display_name: 행정명령
+  keywords:
+  - executive order
+  - presidential
+  - directive
+  - memorandum
+  - proclamation
+  - executive action
+  - signing statement
+  - white house
+  - oval office
+  - cabinet
+  - administration
+  - 행정명령
+  - 대통령령
+  - 시행령
+  - 국무회의
+  - 국무총리
+  - 국무위원
+  - 행정부
+  - 정부
+  - 청와대
+  - 용산
+  - 대통령비서실
+  - 국정과제
+  - 국정운영
+  - 국정기조
+  - 인사
+  - 임명
+  - 해임
+  - 사면
+  - 특사
+  - 긴급명령
+  - 계엄
+- name: JudicialRuling
+  display_name: 사법 판결
+  keywords:
+  - court
+  - ruling
+  - verdict
+  - injunction
+  - settlement
+  - supreme court
+  - appellate
+  - district court
+  - judge
+  - justice
+  - lawsuit
+  - litigation
+  - plaintiff
+  - defendant
+  - damages
+  - precedent
+  - dissent
+  - opinion
+  - constitutional
+  - unconstitutional
+  - 판결
+  - 법원
+  - 소송
+  - 대법원
+  - 헌법재판소
+  - 헌재
+  - 고등법원
+  - 지방법원
+  - 가처분
+  - 집행정지
+  - 기각
+  - 인용
+  - 각하
+  - 항소
+  - 상고
+  - 원고
+  - 피고
+  - 손해배상
+  - 배상명령
+  - 위헌
+  - 합헌
+  - 헌법불합치
+  - 판례
+  - 선고
+  - 공판
+  - 재판
+  - 변호사
+  - 검찰
+  - 검사
+  - 기소
+  - 불기소
+  - 구속
+  - 영장
+- name: AIPolicy
+  display_name: AI/기술 정책
+  keywords:
+  - artificial intelligence
+  - ai regulation
+  - ai act
+  - ai governance
+  - ai safety
+  - ai ethics
+  - machine learning
+  - algorithmic
+  - automated decision
+  - facial recognition
+  - deepfake
+  - generative ai
+  - large language model
+  - ai liability
+  - ai transparency
+  - explainable ai
+  - ai bias
+  - ai audit
+  - 인공지능
+  - AI규제
+  - AI법
+  - AI윤리
+  - AI안전
+  - 알고리즘
+  - 자동화의사결정
+  - 딥페이크
+  - 생성형AI
+  - 챗봇
+  - AI거버넌스
+  - AI책임
+  - AI투명성
+  - AI편향
+  - AI감사
+  - 디지털전환
+  - 디지털뉴딜
+  - 메타버스
+  - 블록체인
+  - NFT
+  - 가상자산
+  - 암호화폐
+  - 핀테크
+  - 빅데이터
+  - 클라우드
+- name: SecurityClassificationFramework
+  display_name: 공공 보안분류/N2SF
+  keywords:
+  - n2sf
+  - 국가 망 보안체계
+  - 망 보안체계
+  - 망분리
+  - 망 분리
+  - 보안등급
+  - 등급분류
+  - c/s/o
+  - categorize
+  - identify
+  - select
+  - assess
+  - 적절성 조정
+  - 보안성 검토
+  - 정보서비스 모델
+  - 위치-주체-객체
+  - csap
+  - 클라우드 보안인증
+  - 공공 클라우드
+  - fedramp
+  - fedramp 20x
+  - fips 199
+  - nist csf
+  - csf 2.0
+  - cybersecurity framework
+  - cyber ai profile
+  - key security indicator
+  - ksi
+  - machine-readable
+  - 기계가독
+  - continuous monitoring
+  - 지속 모니터링
+  - confidentiality
+  - integrity
+  - availability
+  - 기밀성
+  - 무결성
+  - 가용성
+  - 데이터 분류
+  - 정보 분류
+  - 생성형 ai 활용
+  - 생성형AI 활용
+- name: EnforcementAction
+  display_name: 집행/제재
+  keywords:
+  - enforcement
+  - settlement
+  - consent order
+  - penalty
+  - fine
+  - sanction
+  - injunction
+  - 시정명령
+  - 과징금
+  - 과태료
+  - 제재
+  - 처분
+  - 시정조치
+- name: PublicConsultation
+  display_name: 행정예고/의견수렴
+  keywords:
+  - public comment
+  - consultation
+  - notice of proposed rulemaking
+  - request for comments
+  - hearing
+  - draft guidance
+  - 의견수렴
+  - 행정예고
+  - 입법예고
+  - 공청회
+  - 예고안
+  - 개정안
+- name: AgencyGuidance
+  display_name: 가이드라인/해석
+  keywords:
+  - guidance
+  - interpretation
+  - clarification
+  - FAQ
+  - best practices
+  - guideline
+  - 해설
+  - 유권해석
+  - 가이드라인
+  - FAQ
+  - 질의응답
+- name: PlatformPolicy
+  display_name: 플랫폼 운영정책
+  keywords:
+  - platform policy
+  - developer policy
+  - app review
+  - store policy
+  - moderation policy
+  - acceptable use
+  - community guidelines
+  - 운영정책
+  - 플랫폼 정책
+  - 개발자 정책
+  - 심사정책
+  - 게시정책
+- name: FinancialRegulation
+  display_name: 금융 규제
+  keywords:
+  - financial regulation
+  - banking
+  - securities
+  - capital markets
+  - insurance
+  - fintech
+  - cryptocurrency
+  - stablecoin
+  - cbdc
+  - aml
+  - kyc
+  - money laundering
+  - terrorist financing
+  - sanctions
+  - fed
+  - sec
+  - cftc
+  - cfpb
+  - fdic
+  - basel
+  - systemic risk
+  - 금융규제
+  - 금융정책
+  - 금융감독
+  - 금융감독원
+  - 금감원
+  - 금융위
+  - 한국은행
+  - 기준금리
+  - 통화정책
+  - 은행법
+  - 자본시장법
+  - 보험업법
+  - 여신전문금융업법
+  - 전자금융거래법
+  - 가상자산법
+  - 특금법
+  - 자금세탁
+  - 테러자금
+  - 건전성규제
+  - 유동성
+  - 자기자본
+  - BIS비율
+  - 예금자보호
+  - 금융소비자보호
+  - 불완전판매
+  - 금융사기
+- name: EnvironmentalPolicy
+  display_name: 환경 정책
+  keywords:
+  - climate
+  - climate change
+  - carbon
+  - emissions
+  - greenhouse gas
+  - net zero
+  - renewable energy
+  - clean energy
+  - epa
+  - paris agreement
+  - cop
+  - sustainability
+  - esg
+  - pollution
+  - waste
+  - recycling
+  - plastic
+  - biodiversity
+  - 환경정책
+  - 기후변화
+  - 탄소중립
+  - 탄소배출권
+  - 온실가스
+  - 신재생에너지
+  - 태양광
+  - 풍력
+  - 전기차
+  - 수소
+  - 그린뉴딜
+  - ESG
+  - 지속가능
+  - 친환경
+  - 미세먼지
+  - 대기오염
+  - 수질오염
+  - 폐기물
+  - 재활용
+  - 플라스틱
+  - 생태계
+  - 생물다양성
+  - 환경영향평가
+- name: LaborPolicy
+  display_name: 노동 정책
+  keywords:
+  - labor
+  - employment
+  - minimum wage
+  - worker rights
+  - union
+  - collective bargaining
+  - workplace safety
+  - osha
+  - nlrb
+  - gig economy
+  - independent contractor
+  - overtime
+  - paid leave
+  - discrimination
+  - harassment
+  - 노동정책
+  - 고용정책
+  - 근로기준법
+  - 최저임금
+  - 임금
+  - 노동조합
+  - 노사관계
+  - 단체협약
+  - 파업
+  - 쟁의
+  - 해고
+  - 부당해고
+  - 비정규직
+  - 정규직
+  - 플랫폼노동
+  - 긱워커
+  - 산업안전
+  - 산재
+  - 근로시간
+  - 52시간
+  - 연장근무
+  - 야간근무
+  - 휴일
+  - 연차
+  - 출산휴가
+  - 육아휴직
+  - 차별금지
+  - 직장내괴롭힘

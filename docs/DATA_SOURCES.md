@@ -3,6 +3,13 @@
 **Generated:** 2026-03-04  
 **Research Duration:** 10m 33s
 
+## 2026-04-11 Data Quality Overlay
+
+- `policy.yaml` now separates operational event models: `public_consultation`, `enforcement_action`, `policy_effective_date`, `platform_policy_change`, and `security_classification_framework`.
+- Key official sources carry freshness and canonical-key metadata: White House, SEC, CFPB, NIST, GovInfo, FTC, EPA, FDA, EUR-Lex, UK/Canada parliament feeds, FSC, PIPC, and KISA.
+- `source_backlog` keeps higher-effort candidates inactive until parser, ToS, privacy, and diff-hash checks are complete: Regulations.gov API, lawmaking.go.kr, FTC cases, PIPC disposition archive, and platform policy pages.
+- N2SF/CSAP/FIPS 199/FedRAMP 20x tracking must keep official 3-level classification separate from the internal operational overlay described in `docs/n2sf-classification-applicability.md`.
+
 ## Executive Summary
 
 PolicyRadar tracks government policies, legislation, regulations, and public policy news across federal, state, and international jurisdictions. The research identified 40+ high-quality sources including official government APIs (Congress.gov, Federal Register), policy news RSS feeds, and think tank publications.

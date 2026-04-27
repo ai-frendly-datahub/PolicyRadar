@@ -6,14 +6,26 @@ from pathlib import Path
 from typing import cast
 
 from policyradar.analyzer import apply_entity_rules
-from policyradar.collector import collect_sources
+from policyradar.collector import article_matches_source_scope, collect_sources
 from policyradar.common.validators import validate_article
-from policyradar.config_loader import load_category_config, load_settings
+from policyradar.config_loader import (
+    load_category_config,
+    load_category_quality_config,
+    load_settings,
+)
 from policyradar.date_storage import apply_date_storage_policy
+from policyradar.models import Article, Source
+from policyradar.policy_signals import enrich_policy_operational_fields
+from policyradar.quality_report import (
+    build_quality_report,
+    quality_lookback_days,
+    write_quality_report,
+)
 from policyradar.raw_logger import RawLogger
 from policyradar.reporter import generate_index_html, generate_report
 from policyradar.search_index import SearchIndex
 from policyradar.storage import RadarStorage
+from radar_core.ontology import annotate_articles_with_ontology
 
 
 def _send_notifications(
@@ -87,15 +99,23 @@ def run(
     """Execute the lightweight collect -> analyze -> report pipeline."""
     settings = load_settings(config_path)
     category_cfg = load_category_config(category, categories_dir=categories_dir)
+    quality_cfg = load_category_quality_config(category, categories_dir=categories_dir)
 
     print(
         f"[Radar] Collecting '{category_cfg.display_name}' from {len(category_cfg.sources)} sources..."
     )
-    collected, errors = collect_sources(
+    collected, collection_errors = collect_sources(
         category_cfg.sources,
         category=category_cfg.category_name,
         limit_per_source=per_source_limit,
         timeout=timeout,
+    )
+    collected = annotate_articles_with_ontology(
+        collected,
+        repo_name="PolicyRadar",
+        sources_by_name={source.name: source for source in category_cfg.sources},
+        category_name=category_cfg.category_name,
+        search_from=Path(__file__),
     )
 
     raw_logger = RawLogger(settings.raw_data_dir)
@@ -104,36 +124,73 @@ def run(
         if source_articles:
             _ = raw_logger.log(source_articles, source_name=source.name)
 
-    analyzed = apply_entity_rules(collected, category_cfg.entities)
+    analyzed = enrich_policy_operational_fields(
+        apply_entity_rules(collected, category_cfg.entities)
+    )
 
     # Validate articles for data quality
     validated_articles = []
     validation_errors = []
     for article in analyzed:
-        is_valid, errors = validate_article(article)
+        is_valid, validation_msgs = validate_article(article)
         if is_valid:
             validated_articles.append(article)
         else:
-            validation_errors.append(f"{article.link}: {', '.join(errors)}")
+            validation_errors.append(f"{article.link}: {', '.join(validation_msgs)}")
 
     storage = RadarStorage(settings.database_path)
     storage.upsert_articles(validated_articles)
-    errors.extend(validation_errors)
     _ = storage.delete_older_than(keep_days)
 
     with SearchIndex(settings.search_db_path) as search_idx:
-        for article in analyzed:
+        for article in validated_articles:
             search_idx.upsert(article.link, article.title, article.summary)
 
-    recent_articles = storage.recent_articles(category_cfg.category_name, days=recent_days)
+    recent_articles = _filter_report_articles(
+        storage.recent_articles(category_cfg.category_name, days=recent_days),
+        category_cfg.sources,
+    )
+    quality_window_days = quality_lookback_days(
+        category=category_cfg,
+        quality_config=quality_cfg,
+        minimum_days=recent_days,
+    )
+    quality_articles = _filter_report_articles(
+        storage.recent_articles(
+            category_cfg.category_name,
+            days=quality_window_days,
+            limit=10000,
+        ),
+        category_cfg.sources,
+    )
     storage.close()
+    all_errors = [*collection_errors, *validation_errors]
 
+    matched_count = sum(1 for a in recent_articles if a.matched_entities)
+    source_count = len({article.source for article in recent_articles if article.source})
     stats = {
         "sources": len(category_cfg.sources),
-        "collected": len(collected),
-        "matched": sum(1 for a in collected if a.matched_entities),
+        "collected": len(recent_articles),
+        "matched": matched_count,
+        "validated": len(validated_articles),
         "window_days": recent_days,
+        "article_count": len(recent_articles),
+        "source_count": source_count,
+        "matched_count": matched_count,
     }
+
+    quality_report = build_quality_report(
+        category=category_cfg,
+        articles=quality_articles,
+        errors=collection_errors,
+        validation_errors=validation_errors,
+        quality_config=quality_cfg,
+    )
+    quality_report_paths = write_quality_report(
+        quality_report,
+        output_dir=settings.report_dir,
+        category_name=category_cfg.category_name,
+    )
 
     output_path = settings.report_dir / f"{category_cfg.category_name}_report.html"
     _ = generate_report(
@@ -141,7 +198,8 @@ def run(
         articles=recent_articles,
         output_path=output_path,
         stats=stats,
-        errors=errors,
+        errors=all_errors,
+        quality_report=quality_report,
     )
     # Generate index.html
     generate_index_html(settings.report_dir)
@@ -154,22 +212,47 @@ def run(
         snapshot_db=snapshot_db,
     )
     print(f"[Radar] Report generated at {output_path}")
+    print(f"[Radar] Quality report generated at {quality_report_paths['latest']}")
     snapshot_path = date_storage.get("snapshot_path")
     if isinstance(snapshot_path, str) and snapshot_path:
         print(f"[Radar] Snapshot saved at {snapshot_path}")
-    if errors:
-        print(f"[Radar] {len(errors)} source(s) had issues. See report for details.")
+    if collection_errors:
+        print(
+            f"[Radar] {len(collection_errors)} source collection issue(s). "
+            "See report for details."
+        )
+    if validation_errors:
+        print(
+            f"[Radar] {len(validation_errors)} article validation issue(s). "
+            "See report for details."
+        )
 
     _send_notifications(
         category_name=category_cfg.category_name,
         sources_count=len(category_cfg.sources),
         collected_count=len(collected),
         matched_count=sum(1 for a in collected if a.matched_entities),
-        errors_count=len(errors),
+        errors_count=len(all_errors),
         report_path=output_path,
     )
 
     return output_path
+
+
+def _filter_report_articles(
+    articles: list[Article],
+    sources: list[Source],
+) -> list[Article]:
+    sources_by_name = {source.name: source for source in sources}
+    scoped_articles: list[Article] = []
+    for article in articles:
+        source = sources_by_name.get(article.source)
+        if source is None:
+            scoped_articles.append(article)
+            continue
+        if article_matches_source_scope(source, article.title, article.summary):
+            scoped_articles.append(article)
+    return scoped_articles
 
 
 def parse_args() -> argparse.Namespace:

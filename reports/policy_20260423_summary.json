@@ -1,0 +1,108 @@
+{
+  "date": "2026-04-23",
+  "category": "policy",
+  "article_count": 186,
+  "source_count": 20,
+  "matched_count": 167,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 353
+    },
+    {
+      "name": "Legislation",
+      "count": 174
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 60
+    },
+    {
+      "name": "FinancialRegulation",
+      "count": 52
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 48
+    },
+    {
+      "name": "Privacy",
+      "count": 37
+    },
+    {
+      "name": "Platform",
+      "count": 25
+    },
+    {
+      "name": "EnforcementAction",
+      "count": 18
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 18
+    },
+    {
+      "name": "OperationalEvent",
+      "count": 17
+    },
+    {
+      "name": "EnforcementOutcome",
+      "count": 16
+    },
+    {
+      "name": "EnvironmentalPolicy",
+      "count": 10
+    },
+    {
+      "name": "AgencyGuidance",
+      "count": 9
+    },
+    {
+      "name": "LaborPolicy",
+      "count": 9
+    },
+    {
+      "name": "AIPolicy",
+      "count": 8
+    },
+    {
+      "name": "TermsChange",
+      "count": 6
+    },
+    {
+      "name": "SecurityClassificationFramework",
+      "count": 6
+    },
+    {
+      "name": "PublicConsultation",
+      "count": 4
+    },
+    {
+      "name": "ConsultationDeadline",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "PIPC 보도자료": 12,
+    "The Hill": 12,
+    "Reddit r/law": 27,
+    "금융위원회 보도자료": 11,
+    "UK Parliament Bills": 30,
+    "TechCrunch Policy": 2,
+    "Reddit r/technology (Tech Policy)": 4,
+    "EFF Updates": 8,
+    "SEC Speeches": 9,
+    "Reddit r/politics": 3,
+    "EPA Regulations": 4,
+    "금융위원회 보도설명": 2,
+    "White House Presidential Actions": 9,
+    "CATO Institute": 7,
+    "GovInfo Bills": 36,
+    "FDA News Releases": 2,
+    "SEC Press Releases": 4,
+    "CDC Media Releases": 2,
+    "ProPublica Congress": 1,
+    "UN News - Law and Crime": 1
+  },
+  "generated_at": "2026-04-23T13:35:49.669266+09:00"
+}

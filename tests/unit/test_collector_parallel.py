@@ -106,6 +106,87 @@ def test_parallel_collection_isolates_source_errors() -> None:
     assert len(errors) == 3
 
 
+def test_collect_sources_skips_disabled_sources(tmp_path) -> None:
+    source = Source(
+        name="disabled_feed",
+        type="rss",
+        url="https://example.com/feed",
+        enabled=False,
+    )
+
+    with patch("policyradar.collector._collect_single") as mock_collect:
+        articles, errors = collect_sources(
+            [source],
+            category="test",
+            min_interval_per_host=0.0,
+            health_db_path=str(tmp_path / "health.duckdb"),
+        )
+
+    assert articles == []
+    assert errors == []
+    mock_collect.assert_not_called()
+
+
+def test_collect_sources_respects_crawl_health_bypass() -> None:
+    manager = _pass_through_manager()
+
+    class DisabledHealthStore:
+        def __init__(self, *args: object, **kwargs: object) -> None:
+            pass
+
+        def is_disabled(self, source_name: str) -> bool:
+            return True
+
+        def close(self) -> None:
+            pass
+
+    blocked_source = Source(
+        name="blocked_feed",
+        type="rss",
+        url="https://example.com/blocked.xml",
+    )
+    bypass_source = Source(
+        name="bypass_feed",
+        type="rss",
+        url="https://example.com/bypass.xml",
+        config={"bypass_crawl_health": True},
+    )
+
+    def fake_collect(
+        source: Source,
+        *,
+        category: str,
+        limit: int,
+        timeout: int,
+        session: object | None = None,
+    ) -> list[Article]:
+        return [
+            Article(
+                title=f"article-{source.name}",
+                link=f"https://example.com/{source.name}",
+                summary="ok",
+                published=None,
+                source=source.name,
+                category=category,
+            )
+        ]
+
+    with (
+        patch("policyradar.collector.CrawlHealthStore", DisabledHealthStore),
+        patch("policyradar.collector._collect_single", side_effect=fake_collect),
+        patch("policyradar.collector.get_circuit_breaker_manager", return_value=manager),
+    ):
+        articles, errors = collect_sources(
+            [blocked_source, bypass_source],
+            category="test",
+            min_interval_per_host=0.0,
+            max_workers=1,
+        )
+
+    assert [article.source for article in articles] == ["bypass_feed"]
+    assert errors == ["blocked_feed: Source disabled (crawl health threshold reached)"]
+
+
 def test_max_workers_one_preserves_sequential_order() -> None:
     sources = _build_sources(5)
     manager = _pass_through_manager()
