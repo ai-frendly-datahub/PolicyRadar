@@ -44,7 +44,7 @@ PolicyRadar/
 - taxonomy 기준으로 `공식 + 운영 + 시장 + 커뮤니티` 레이어를 유지한다.
 - config loader가 source 메타데이터(`trust_tier`, `info_purpose`, `config`)를 보존한다.
 - 정책 분류체계/N2SF/CSAP/FedRAMP 20x 적용 메모:
-  [n2sf-classification-applicability.md](/home/kjs/projects/ai-frendly-datahub/PolicyRadar/docs/n2sf-classification-applicability.md)
+  [n2sf-classification-applicability.md](docs/n2sf-classification-applicability.md)
 - `config/categories/policy.yaml`에는 `SecurityClassificationFramework` 엔티티가 추가되어 공공 보안분류 정책을 별도 태깅한다.
 
 ## COMMANDS
