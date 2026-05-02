@@ -1,0 +1,69 @@
+{
+  "date": "2026-05-02",
+  "category": "policy",
+  "article_count": 200,
+  "source_count": 13,
+  "matched_count": 154,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 175
+    },
+    {
+      "name": "Legislation",
+      "count": 111
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 55
+    },
+    {
+      "name": "Platform",
+      "count": 28
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 27
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 20
+    },
+    {
+      "name": "FinancialRegulation",
+      "count": 8
+    },
+    {
+      "name": "LaborPolicy",
+      "count": 7
+    },
+    {
+      "name": "Privacy",
+      "count": 1
+    },
+    {
+      "name": "EnvironmentalPolicy",
+      "count": 1
+    },
+    {
+      "name": "TermsChange",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "The Hill": 50,
+    "Reddit r/technology (Tech Policy)": 21,
+    "Reddit r/law": 20,
+    "Reddit r/politics": 25,
+    "TechCrunch Policy": 8,
+    "The Verge": 10,
+    "ProPublica Congress": 2,
+    "White House Presidential Actions": 1,
+    "FDA News Releases": 1,
+    "CATO Institute": 1,
+    "EFF Updates": 1,
+    "UK Parliament Bills": 48,
+    "GovInfo Bills": 12
+  },
+  "generated_at": "2026-05-02T12:24:18.501079+09:00"
+}
