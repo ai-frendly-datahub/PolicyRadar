@@ -173,6 +173,15 @@ def main() -> None:
     print(f"missing_sources={summary['missing_sources']}")
     print(f"fresh_policy_events={summary['fresh_policy_events']}")
     print(f"events_with_evidence_url={summary['events_with_evidence_url']}")
+    print(f"daily_review_item_count={summary['daily_review_item_count']}")
+    print(
+        "public_consultation_events_with_deadline="
+        f"{summary['public_consultation_events_with_deadline']}"
+    )
+    print(
+        "enforcement_action_events_with_outcome="
+        f"{summary['enforcement_action_events_with_outcome']}"
+    )
 
 
 if __name__ == "__main__":

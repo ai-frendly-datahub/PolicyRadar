@@ -116,6 +116,9 @@ def _render_policy_quality_panel(quality_report: Mapping[str, Any]) -> str:
     summary_map = summary if isinstance(summary, Mapping) else {}
     sources = [row for row in _list(quality_report.get("sources")) if isinstance(row, Mapping)]
     events = [row for row in _list(quality_report.get("events")) if isinstance(row, Mapping)]
+    daily_review_items = [
+        row for row in _list(quality_report.get("daily_review_items")) if isinstance(row, Mapping)
+    ]
     flagged_sources = [
         row
         for row in sources
@@ -138,6 +141,7 @@ def _render_policy_quality_panel(quality_report: Mapping[str, Any]) -> str:
         ("stale events", summary_map.get("stale_policy_events", 0)),
         ("event keys", summary_map.get("unique_policy_event_key_count", 0)),
         ("evidence URLs", summary_map.get("events_with_evidence_url", 0)),
+        ("daily review", summary_map.get("daily_review_item_count", len(daily_review_items))),
     ]
     chip_html = "\n".join(
         f'<span class="chip"><strong>{escape(label)}</strong> {escape(str(value))}</span>'
@@ -166,6 +170,7 @@ def _render_policy_quality_panel(quality_report: Mapping[str, Any]) -> str:
             <p class="muted small">{scope_note}</p>
             {_render_quality_sources(flagged_sources)}
             {_render_policy_events(highlighted_events)}
+            {_render_daily_review_items(daily_review_items[:8])}
           </div>
         </article>
       </section>
@@ -243,6 +248,22 @@ def _event_details(event: Mapping[str, Any]) -> str:
     if evidence_url:
         values.append("evidence " + escape(evidence_url))
     return "" if not values else ": " + "; ".join(values)
+
+
+def _render_daily_review_items(items: list[Mapping[str, Any]]) -> str:
+    if not items:
+        return '<p class="muted small">No policy daily review items in this run.</p>'
+
+    rows: list[str] = []
+    for item in items:
+        reason = escape(str(item.get("reason", "")))
+        source = escape(str(item.get("source", "")))
+        model = escape(str(item.get("event_model", "")))
+        title = escape(str(item.get("title", "")))
+        evidence = escape(str(item.get("evidence_url", "")))
+        detail = title or evidence or escape(str(item.get("error", "")))
+        rows.append(f"<li><strong>{reason}</strong> {source} ({model}) {detail}</li>")
+    return "<ul>" + "\n".join(rows) + "</ul>"
 
 
 def _list(value: object) -> list[Any]:

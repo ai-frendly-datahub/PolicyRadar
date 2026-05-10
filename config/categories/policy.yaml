@@ -206,15 +206,15 @@ sources:
   - enforcement
   - regulatory_notice
   - enforcement_action
-  notes: Official SEC enforcement and rule announcement feed; quiet windows of 5-6
-    days are common between announcement bursts.
+  notes: Official SEC enforcement and rule announcement feed; audited quiet windows
+    can exceed one week between announcement bursts.
   config:
     event_model: enforcement_action
     canonical_key_fields:
     - source
     - title
     - published
-    freshness_sla_days: 6
+    freshness_sla_days: 14
     observed_date_field: published
 - name: SEC Speeches
   type: rss
@@ -726,6 +726,8 @@ entities:
   - data portability
   - cross-border data
   - data localization
+  - IP camera
+  - network camera
   - 개인정보
   - 개인정보보호
   - 개인정보보호법
@@ -740,6 +742,9 @@ entities:
   - 정보통신망법
   - 개인정보유출
   - 개인정보침해
+  - IP카메라
+  - 아이피카메라
+  - 개인영상정보
   - 동의
   - 수집이용
   - 제3자 제공
@@ -816,6 +821,10 @@ entities:
   - national security
   - military
   - defense
+  - FDA
+  - Food and Drug Administration
+  - infant formula
+  - chemical contaminants
   - 정책
   - 규제
   - 법률

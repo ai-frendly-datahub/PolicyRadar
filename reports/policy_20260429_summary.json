@@ -1,0 +1,153 @@
+{
+  "date": "2026-04-29",
+  "category": "policy",
+  "article_count": 12,
+  "source_count": 3,
+  "matched_count": 11,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 11
+    },
+    {
+      "name": "Privacy",
+      "count": 10
+    },
+    {
+      "name": "Legislation",
+      "count": 3
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 1
+    },
+    {
+      "name": "EnforcementAction",
+      "count": 1
+    },
+    {
+      "name": "EnforcementOutcome",
+      "count": 1
+    },
+    {
+      "name": "OperationalEvent",
+      "count": 1
+    },
+    {
+      "name": "AIPolicy",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "PIPC 보도자료": 10,
+    "SEC Speeches": 1,
+    "UK Parliament Bills": 1
+  },
+  "generated_at": "2026-04-29T00:03:25.638439+09:00",
+  "articles": [
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12004"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12007"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12010"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12011"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12019"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12020"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12021"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12023"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12030"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12031"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.sec.gov/newsroom/speeches-statements/atkins-042826-remarks-small-business-capital-formation-advisory-committee-meeting"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_name": "UK Parliament Bills",
+        "headline": "Pension Schemes Bill",
+        "source_url": "https://bills.parliament.uk/bills/3982",
+        "published_at": "2026-04-28T05:11:48+00:00",
+        "summary": "A Bill to make provision about pension schemes; and for connected purposes."
+      }
+    }
+  ],
+  "ontology": {
+    "repo": "PolicyRadar",
+    "category": "policy",
+    "ontology_version": "0.1.0",
+    "event_model_ids": [
+      "policy.editorial_coverage",
+      "policy.enforcement_action",
+      "policy.legislative_action",
+      "policy.policy_effective_date",
+      "policy.public_consultation",
+      "policy.regulatory_guidance",
+      "policy.security_classification_framework"
+    ],
+    "event_model_mappings": {
+      "public_consultation": "policy.public_consultation",
+      "enforcement_action": "policy.enforcement_action",
+      "policy_effective_date": "policy.policy_effective_date",
+      "regulatory_guidance": "policy.regulatory_guidance",
+      "editorial_coverage": "policy.editorial_coverage",
+      "legislative_action": "policy.legislative_action",
+      "security_classification_framework": "policy.security_classification_framework"
+    },
+    "entity_type_hints": [
+      "policy.regulation",
+      "organization.agency"
+    ],
+    "source_role_ids": [
+      "context_only",
+      "primary_evidence"
+    ],
+    "source_role_mappings": {
+      "NIST News": "context_only",
+      "EPA Regulations": "primary_evidence"
+    },
+    "evidence_policy_ids": [
+      "traceable_url_required",
+      "official_confirmation_required",
+      "cross_reference_required"
+    ]
+  }
+}

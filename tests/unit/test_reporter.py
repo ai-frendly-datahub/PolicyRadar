@@ -54,6 +54,7 @@ def test_generate_report_injects_policy_quality_panel(tmp_path, monkeypatch) -> 
             "stale_policy_events": 1,
             "unique_policy_event_key_count": 2,
             "events_with_evidence_url": 2,
+            "daily_review_item_count": 1,
         },
         "sources": [
             {
@@ -105,6 +106,15 @@ def test_generate_report_injects_policy_quality_panel(tmp_path, monkeypatch) -> 
                 "internal_operational_overlays": ["S-Low"],
             },
         ],
+        "daily_review_items": [
+            {
+                "reason": "enforcement_action_missing_outcome",
+                "source": "SEC Press Releases",
+                "event_model": "enforcement_action",
+                "title": "SEC enforcement notice",
+                "evidence_url": "https://example.com/sec",
+            }
+        ],
     }
 
     generate_report(
@@ -128,6 +138,8 @@ def test_generate_report_injects_policy_quality_panel(tmp_path, monkeypatch) -> 
         assert "SEC Press Releases" in rendered
         assert "collection errors" in rendered
         assert "event keys" in rendered
+        assert "daily review" in rendered
+        assert "enforcement_action_missing_outcome" in rendered
         assert "legacy_rss_forbidden_403" in rendered
         assert "Public comment on privacy rule" in rendered
         assert "2026-04-30" in rendered

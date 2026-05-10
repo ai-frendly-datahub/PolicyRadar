@@ -1,0 +1,215 @@
+{
+  "date": "2026-04-30",
+  "category": "policy",
+  "article_count": 17,
+  "source_count": 8,
+  "matched_count": 17,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 25
+    },
+    {
+      "name": "Privacy",
+      "count": 12
+    },
+    {
+      "name": "Legislation",
+      "count": 5
+    },
+    {
+      "name": "EnvironmentalPolicy",
+      "count": 5
+    },
+    {
+      "name": "EnforcementOutcome",
+      "count": 2
+    },
+    {
+      "name": "OperationalEvent",
+      "count": 2
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 2
+    },
+    {
+      "name": "EnforcementAction",
+      "count": 1
+    },
+    {
+      "name": "AIPolicy",
+      "count": 1
+    },
+    {
+      "name": "AgencyGuidance",
+      "count": 1
+    },
+    {
+      "name": "FinancialRegulation",
+      "count": 1
+    },
+    {
+      "name": "PublicConsultation",
+      "count": 1
+    },
+    {
+      "name": "SecurityClassificationFramework",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "PIPC 보도자료": 10,
+    "금융위원회 보도자료": 1,
+    "EFF Updates": 1,
+    "Reddit r/politics": 1,
+    "UK Parliament Bills": 1,
+    "EPA Regulations": 1,
+    "Reddit r/technology (Tech Policy)": 1,
+    "FDA News Releases": 1
+  },
+  "generated_at": "2026-04-30T11:24:57.291045+09:00",
+  "articles": [
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12007"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12010"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12011"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12019"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12020"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12021"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12023"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12030"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12031"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.pipc.go.kr/np/cop/bbs/selectBoardArticle.do?bbsId=BS074&mCode=&nttId=12033"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.fsc.go.kr/no010101/86814"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_name": "EFF Updates",
+        "headline": "EFF Submission to UN Report on the Role of Media in the Context of Israel’s Policies Toward Palestinians",
+        "source_url": "https://www.eff.org/deeplinks/2026/04/eff-submission-un-report-role-media-context-israels-policies-toward-palestinians",
+        "published_at": "2026-04-29T12:22:55+00:00",
+        "summary": "<div class=\"field field--name-body field--type-text-with-summary field--label-hidden\"><div class=\"field__items\"><div class=\"field__item even\"><p><span>The UN Special Rapporteur on the situation of human rights in the Palestinian territories occupied since 1967 </span><a href=\"https://www.ohchr.org/en/calls-for-input/2026/call-input-role-media-context-israels-policies-and-practices-toward\"><span>recently announced</span></a><span> a study addressing the killings and attacks against Palestinian journalists and media workers, the destruction of media infrastructure in Gaza, and the production and dissemination of narratives that may enable, justify, or incite international crimes. </span></p>\n<p>As part of this consultation, EFF<span> </span><a href=\"https://www.eff.org/document/eff-submission-call-input-role-media-context-israels-policies-and-practices-toward\">contributed a submission</a><span> </span>that identifies a significant deterioration of press freedom and free expression in the period since October 2023, including an increase in censorship and wave of killings of journalists; adding to an already pervasive censorship and surveillance regime for Palestinians. </p>\n<p><span>In particular, concerns raised in our submission relate to:</span></p>\n<ol>\n<li><span>Government takedown requests </span></li>\n<li><span>Disinformation and content moderation</span></li>\n<li><span>Attacks on internet infrastructure</span></li>\n</ol>\n<p>The concerns about censorship in Palestine are ever increasing, and include multiple international forums. Ending the deliberate digital isolation of the Palestinian people is critical to protecting fundamental human rights.</p>\n<p><span>Read the briefing in full <a href=\"https://www.eff.org/document/eff-submission-call-input-role-media-context-israels-policies-and-practices-toward\">here</a>.</span></p>\n\n</div></div></div>"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_name": "Reddit r/politics",
+        "headline": "Pete Hegseth lost his cool in front of Congress. It was a dramatic unraveling",
+        "source_url": "https://www.reddit.com/r/politics/comments/1sz99si/pete_hegseth_lost_his_cool_in_front_of_congress/",
+        "published_at": "2026-04-29T10:38:46+00:00",
+        "summary": "<table> <tr><td> <a href=\"https://www.reddit.com/r/politics/comments/1sz99si/pete_hegseth_lost_his_cool_in_front_of_congress/\"> <img alt=\"Pete Hegseth lost his cool in front of Congress. It was a dramatic unraveling\" src=\"https://external-preview.redd.it/vbtvb-eqC_yb5ewISGAeNpJrC6xNxc9ju3epLKurhro.jpeg?width=640&crop=smart&auto=webp&s=4d7ff46769bcf266527e56bf388f2f129ea81130\" title=\"Pete Hegseth lost his cool in front of Congress. It was a dramatic unraveling\" /> </a> </td><td>   submitted by   <a href=\"https://www.reddit.com/user/theindependentonline\"> /u/theindependentonline </a> <br /> <span><a href=\"https://www.independent.co.uk/news/world/americas/hegseth-congress-iran-war-trump-b2967479.html\">[link]</a></span>   <span><a href=\"https://www.reddit.com/r/politics/comments/1sz99si/pete_hegseth_lost_his_cool_in_front_of_congress/\">[comments]</a></span> </td></tr></table>"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_name": "UK Parliament Bills",
+        "headline": "English Devolution and Community Empowerment Act 2026",
+        "source_url": "https://bills.parliament.uk/bills/4002",
+        "published_at": "2026-04-29T08:38:16+00:00",
+        "summary": "A Bill to make provision about combined authorities, combined county authorities, the Greater London Authority, local councils, police and crime commissioners and fire and rescue authorities, local audit and terms in business tenancies about rent."
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "https://www.epa.gov/newsreleases/epa-announces-80-million-funding-protect-waterways-sewage-overflows"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_name": "Reddit r/technology (Tech Policy)",
+        "headline": "Maryland becomes first state to ban surveillance pricing in grocery stores",
+        "source_url": "https://www.reddit.com/r/technology/comments/1sz41mb/maryland_becomes_first_state_to_ban_surveillance/",
+        "published_at": "2026-04-29T07:36:06+00:00",
+        "summary": "<table> <tr><td> <a href=\"https://www.reddit.com/r/technology/comments/1sz41mb/maryland_becomes_first_state_to_ban_surveillance/\"> <img alt=\"Maryland becomes first state to ban surveillance pricing in grocery stores\" src=\"https://external-preview.redd.it/WpuingsvIna-l2dtjfz8MQ6byFOSZkbpDxnX34VTC-Q.jpeg?width=640&crop=smart&auto=webp&s=e335c4b9f3b950aba31978564a494ad3fcca0345\" title=\"Maryland becomes first state to ban surveillance pricing in grocery stores\" /> </a> </td><td>   submitted by   <a href=\"https://www.reddit.com/user/idkbruh653\"> /u/idkbruh653 </a> <br /> <span><a href=\"https://www.theguardian.com/technology/2026/apr/29/maryland-grocery-stores-ban-surveillance-pricing\">[link]</a></span>   <span><a href=\"https://www.reddit.com/r/technology/comments/1sz41mb/maryland_becomes_first_state_to_ban_surveillance/\">[comments]</a></span> </td></tr></table>"
+      }
+    },
+    {
+      "event_model_payload": {
+        "source_url": "http://www.fda.gov/news-events/press-announcements/fda-releases-results-largest-ever-testing-infant-formula-us"
+      }
+    }
+  ],
+  "ontology": {
+    "repo": "PolicyRadar",
+    "category": "policy",
+    "ontology_version": "0.1.0",
+    "event_model_ids": [
+      "policy.editorial_coverage",
+      "policy.enforcement_action",
+      "policy.legislative_action",
+      "policy.policy_effective_date",
+      "policy.public_consultation",
+      "policy.regulatory_guidance",
+      "policy.security_classification_framework"
+    ],
+    "event_model_mappings": {
+      "public_consultation": "policy.public_consultation",
+      "enforcement_action": "policy.enforcement_action",
+      "policy_effective_date": "policy.policy_effective_date",
+      "regulatory_guidance": "policy.regulatory_guidance",
+      "editorial_coverage": "policy.editorial_coverage",
+      "legislative_action": "policy.legislative_action",
+      "security_classification_framework": "policy.security_classification_framework"
+    },
+    "entity_type_hints": [
+      "policy.regulation",
+      "organization.agency"
+    ],
+    "source_role_ids": [
+      "context_only",
+      "primary_evidence"
+    ],
+    "source_role_mappings": {
+      "NIST News": "context_only",
+      "EPA Regulations": "primary_evidence"
+    },
+    "evidence_policy_ids": [
+      "traceable_url_required",
+      "official_confirmation_required",
+      "cross_reference_required"
+    ]
+  }
+}

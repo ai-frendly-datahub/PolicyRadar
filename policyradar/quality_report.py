@@ -80,6 +80,33 @@ def build_quality_report(
         "undated_policy_events": event_status_counts.get("unknown_event_date", 0),
         "unique_policy_event_key_count": len(event_keys),
         "events_with_evidence_url": sum(1 for row in events if row.get("evidence_url")),
+        "events_missing_evidence_url": sum(
+            1 for row in events if not row.get("evidence_url")
+        ),
+        "public_consultation_events_with_deadline": sum(
+            1
+            for row in events
+            if row.get("event_model") == "public_consultation"
+            and row.get("consultation_deadline")
+        ),
+        "policy_effective_date_events_with_effective_date": sum(
+            1
+            for row in events
+            if row.get("event_model") == "policy_effective_date"
+            and row.get("policy_effective_date")
+        ),
+        "platform_policy_change_events_with_effective_date": sum(
+            1
+            for row in events
+            if row.get("event_model") == "platform_policy_change"
+            and row.get("policy_effective_date")
+        ),
+        "enforcement_action_events_with_outcome": sum(
+            1
+            for row in events
+            if row.get("event_model") == "enforcement_action"
+            and row.get("enforcement_outcomes")
+        ),
         "security_framework_official_scope_events": sum(
             1
             for row in events
@@ -89,6 +116,12 @@ def build_quality_report(
     }
     for event_model in TRACKED_EVENT_MODEL_ORDER:
         summary[f"{event_model}_events"] = event_counts.get(event_model, 0)
+    daily_review_items = _build_daily_review_items(
+        source_rows=source_rows,
+        events=events,
+        validation_errors=validation_errors_list,
+    )
+    summary["daily_review_item_count"] = len(daily_review_items)
 
     return {
         "category": category.category_name,
@@ -101,6 +134,7 @@ def build_quality_report(
         "summary": summary,
         "sources": source_rows,
         "events": events,
+        "daily_review_items": daily_review_items,
         "errors": errors_list,
         "validation_errors": validation_errors_list,
     }
@@ -261,6 +295,119 @@ def _build_event_rows(
                 }
             )
     return rows
+
+
+def _build_daily_review_items(
+    *,
+    source_rows: list[dict[str, Any]],
+    events: list[dict[str, Any]],
+    validation_errors: list[str],
+) -> list[dict[str, Any]]:
+    items: list[dict[str, Any]] = []
+    for row in source_rows:
+        source_name = str(row.get("source") or "")
+        status = str(row.get("status") or "")
+        event_model = str(row.get("event_model") or "")
+        if status in {"missing", "stale", "unknown_event_date"}:
+            items.append(
+                {
+                    "reason": f"source_status_{status}",
+                    "source": source_name,
+                    "event_model": event_model,
+                    "freshness_sla_days": row.get("freshness_sla_days"),
+                    "age_days": row.get("age_days"),
+                    "latest_event_at": row.get("latest_event_at"),
+                    "detail": "Tracked policy source needs collection or freshness follow-up.",
+                }
+            )
+
+        if status == "skipped_disabled" and event_model in TRACKED_EVENT_MODELS:
+            items.append(
+                {
+                    "reason": "disabled_source_gate",
+                    "source": source_name,
+                    "event_model": event_model,
+                    "disabled_reason": row.get("disabled_reason"),
+                    "required_before_enable": row.get("required_before_enable", []),
+                }
+            )
+
+        for error in _list(row.get("errors")):
+            items.append(
+                {
+                    "reason": "source_collection_error",
+                    "source": source_name,
+                    "event_model": event_model,
+                    "error": error,
+                }
+            )
+
+    for error in validation_errors:
+        items.append({"reason": "article_validation_error", "error": error})
+
+    for event in events:
+        event_model = str(event.get("event_model") or "")
+        event_status = str(event.get("event_status") or "")
+        if event_status in {"stale", "unknown_event_date"}:
+            items.append(
+                {
+                    "reason": f"event_status_{event_status}",
+                    "source": event.get("source"),
+                    "event_model": event_model,
+                    "event_at": event.get("event_at"),
+                    "event_age_days": event.get("event_age_days"),
+                    "event_freshness_sla_days": event.get("event_freshness_sla_days"),
+                    "evidence_url": event.get("evidence_url"),
+                    "title": event.get("title"),
+                }
+            )
+        if not event.get("evidence_url"):
+            items.append(
+                {
+                    "reason": "event_missing_evidence_url",
+                    "source": event.get("source"),
+                    "event_model": event_model,
+                    "policy_event_key": event.get("policy_event_key"),
+                    "title": event.get("title"),
+                }
+            )
+        if event_model == "public_consultation" and not event.get("consultation_deadline"):
+            items.append(
+                {
+                    "reason": "public_consultation_missing_deadline",
+                    "source": event.get("source"),
+                    "event_model": event_model,
+                    "policy_event_key": event.get("policy_event_key"),
+                    "evidence_url": event.get("evidence_url"),
+                    "title": event.get("title"),
+                }
+            )
+        if event_model in {"policy_effective_date", "platform_policy_change"} and not event.get(
+            "policy_effective_date"
+        ):
+            items.append(
+                {
+                    "reason": "policy_change_missing_effective_date",
+                    "source": event.get("source"),
+                    "event_model": event_model,
+                    "policy_event_key": event.get("policy_event_key"),
+                    "evidence_url": event.get("evidence_url"),
+                    "title": event.get("title"),
+                }
+            )
+        if event_model == "enforcement_action" and not event.get("enforcement_outcomes"):
+            items.append(
+                {
+                    "reason": "enforcement_action_missing_outcome",
+                    "source": event.get("source"),
+                    "event_model": event_model,
+                    "policy_event_key": event.get("policy_event_key"),
+                    "evidence_url": event.get("evidence_url"),
+                    "title": event.get("title"),
+                }
+            )
+
+    return items[:100]
 
 
 def _article_event_models(

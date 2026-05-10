@@ -131,6 +131,22 @@ def test_real_policy_config_avoids_common_false_positive_terms() -> None:
             source="The Hill",
             category="policy",
         ),
+        Article(
+            title="내 일상이 실시간으로 중계된다고? IP카메라 비밀번호 당장 바꾸세요",
+            link="https://example.com/pipc-ip-camera",
+            summary="Privacy regulator public notice.",
+            published=None,
+            source="PIPC 보도자료",
+            category="policy",
+        ),
+        Article(
+            title="FDA Releases Results from Largest-Ever Testing of Infant Formula in the U.S.",
+            link="https://example.com/fda-infant-formula",
+            summary="The release covers chemical contaminants in infant formula.",
+            published=None,
+            source="FDA News Releases",
+            category="policy",
+        ),
     ]
 
     analyzed = apply_entity_rules(articles, config.entities)
@@ -138,6 +154,8 @@ def test_real_policy_config_avoids_common_false_positive_terms() -> None:
     assert "TermsChange" not in analyzed[0].matched_entities
     assert "ConsumerRights" not in analyzed[1].matched_entities
     assert "Regulation" in analyzed[1].matched_entities
+    assert "Privacy" in analyzed[2].matched_entities
+    assert "Regulation" in analyzed[3].matched_entities
 
 
 def test_load_category_config_preserves_source_metadata(tmp_path) -> None:

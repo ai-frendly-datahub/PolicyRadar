@@ -119,7 +119,13 @@ def test_build_quality_report_tracks_policy_event_statuses() -> None:
     assert report["summary"]["undated_policy_events"] == 0
     assert report["summary"]["unique_policy_event_key_count"] == 3
     assert report["summary"]["events_with_evidence_url"] == 3
+    assert report["summary"]["events_missing_evidence_url"] == 0
+    assert report["summary"]["public_consultation_events_with_deadline"] == 1
+    assert report["summary"]["policy_effective_date_events_with_effective_date"] == 0
+    assert report["summary"]["platform_policy_change_events_with_effective_date"] == 0
+    assert report["summary"]["enforcement_action_events_with_outcome"] == 1
     assert report["summary"]["security_framework_official_scope_events"] == 1
+    assert report["summary"]["daily_review_item_count"] == 4
     assert "do not replace official N2SF C/S/O grading" in report["classification_scope_note"]
 
     statuses = {row["source"]: row["status"] for row in report["sources"]}
@@ -156,6 +162,11 @@ def test_build_quality_report_tracks_policy_event_statuses() -> None:
     assert framework_event["security_frameworks"] == ["N2SF", "FIPS 199"]
     assert framework_event["official_security_grades"] == ["C", "S", "O"]
     assert framework_event["internal_operational_overlays"] == ["S-Low"]
+    daily_reasons = [item["reason"] for item in report["daily_review_items"]]
+    assert "source_status_stale" in daily_reasons
+    assert "source_status_missing" in daily_reasons
+    assert "source_collection_error" in daily_reasons
+    assert "event_status_stale" in daily_reasons
 
 
 def test_build_quality_report_attaches_bracket_prefixed_source_errors() -> None:
@@ -197,6 +208,11 @@ def test_build_quality_report_attaches_bracket_prefixed_source_errors() -> None:
     assert rows["Legacy RSS"]["tracked"] is False
     assert rows["Legacy RSS"]["disabled_reason"] == "legacy_rss_forbidden_403"
     assert rows["Legacy RSS"]["required_before_enable"] == ["stable_official_feed"]
+    assert report["summary"]["daily_review_item_count"] == 4
+    daily_reasons = [item["reason"] for item in report["daily_review_items"]]
+    assert "source_status_missing" in daily_reasons
+    assert "source_collection_error" in daily_reasons
+    assert "disabled_source_gate" in daily_reasons
 
 
 def test_build_quality_report_excludes_disabled_sources_from_tracking_and_events() -> None:
