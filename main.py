@@ -126,6 +126,7 @@ def run(
             search_idx.upsert(article.link, article.title, article.summary)
 
     recent_articles = storage.recent_articles(category_cfg.category_name, days=recent_days)
+    recent_articles = [a for a in recent_articles if a.matched_entities]
     storage.close()
 
     stats = {
