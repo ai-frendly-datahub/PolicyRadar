@@ -1,41 +1,41 @@
 {
   "date": "2026-05-13",
   "category": "policy",
-  "article_count": 200,
-  "source_count": 15,
-  "matched_count": 142,
+  "article_count": 143,
+  "source_count": 12,
+  "matched_count": 143,
   "top_entities": [
     {
       "name": "Regulation",
-      "count": 210
+      "count": 209
     },
     {
       "name": "Legislation",
-      "count": 96
-    },
-    {
-      "name": "JudicialRuling",
-      "count": 51
+      "count": 97
     },
     {
       "name": "Platform",
+      "count": 52
+    },
+    {
+      "name": "JudicialRuling",
       "count": 47
     },
     {
       "name": "ConsumerRights",
-      "count": 43
+      "count": 42
     },
     {
       "name": "ExecutiveOrder",
-      "count": 28
+      "count": 32
     },
     {
       "name": "FinancialRegulation",
-      "count": 16
+      "count": 15
     },
     {
       "name": "Privacy",
-      "count": 10
+      "count": 11
     },
     {
       "name": "EnvironmentalPolicy",
@@ -47,25 +47,22 @@
     },
     {
       "name": "AIPolicy",
-      "count": 1
+      "count": 2
     }
   ],
   "sources": {
-    "The Hill": 50,
-    "The Verge": 10,
-    "Reddit r/technology (Tech Policy)": 25,
-    "Reddit r/politics": 25,
+    "The Verge": 9,
     "Reddit r/law": 23,
+    "Reddit r/politics": 10,
+    "Reddit r/technology (Tech Policy)": 12,
+    "EFF Updates": 7,
+    "The Hill": 37,
     "White House Presidential Actions": 3,
-    "TechCrunch Policy": 20,
-    "EFF Updates": 6,
-    "UK Parliament Bills": 4,
-    "FDA News Releases": 2,
-    "ProPublica Congress": 4,
-    "GovInfo Bills": 21,
+    "TechCrunch Policy": 13,
+    "ProPublica Congress": 3,
+    "GovInfo Bills": 20,
     "금융위원회 보도설명": 2,
-    "금융위원회 보도자료": 4,
-    "UN News - Law and Crime": 1
+    "금융위원회 보도자료": 4
   },
-  "generated_at": "2026-05-13T05:54:08.927037+09:00"
+  "generated_at": "2026-05-13T08:49:04.885575+09:00"
 }
