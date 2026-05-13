@@ -19,11 +19,11 @@
     },
     {
       "name": "JudicialRuling",
-      "count": 47
+      "count": 45
     },
     {
       "name": "ConsumerRights",
-      "count": 42
+      "count": 43
     },
     {
       "name": "ExecutiveOrder",
@@ -31,7 +31,7 @@
     },
     {
       "name": "FinancialRegulation",
-      "count": 15
+      "count": 16
     },
     {
       "name": "Privacy",
@@ -53,16 +53,16 @@
   "sources": {
     "The Verge": 9,
     "Reddit r/law": 23,
-    "Reddit r/politics": 10,
+    "Reddit r/politics": 9,
     "Reddit r/technology (Tech Policy)": 12,
     "EFF Updates": 7,
     "The Hill": 37,
     "White House Presidential Actions": 3,
-    "TechCrunch Policy": 13,
+    "TechCrunch Policy": 14,
     "ProPublica Congress": 3,
     "GovInfo Bills": 20,
     "금융위원회 보도설명": 2,
     "금융위원회 보도자료": 4
   },
-  "generated_at": "2026-05-13T08:49:04.885575+09:00"
+  "generated_at": "2026-05-13T09:07:27.872511+09:00"
 }
