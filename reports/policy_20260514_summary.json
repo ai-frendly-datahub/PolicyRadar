@@ -1,21 +1,21 @@
 {
   "date": "2026-05-14",
   "category": "policy",
-  "article_count": 141,
+  "article_count": 140,
   "source_count": 10,
-  "matched_count": 141,
+  "matched_count": 140,
   "top_entities": [
     {
       "name": "Regulation",
-      "count": 172
+      "count": 169
     },
     {
       "name": "Legislation",
-      "count": 92
+      "count": 88
     },
     {
       "name": "ConsumerRights",
-      "count": 42
+      "count": 41
     },
     {
       "name": "JudicialRuling",
@@ -23,7 +23,7 @@
     },
     {
       "name": "Platform",
-      "count": 25
+      "count": 26
     },
     {
       "name": "ExecutiveOrder",
@@ -55,16 +55,16 @@
     }
   ],
   "sources": {
+    "ProPublica Congress": 2,
+    "Reddit r/technology (Tech Policy)": 11,
     "TechCrunch Policy": 16,
     "Reddit r/politics": 14,
     "The Hill": 41,
-    "GovInfo Bills": 25,
-    "Reddit r/technology (Tech Policy)": 9,
+    "GovInfo Bills": 21,
     "Reddit r/law": 22,
     "금융위원회 보도자료": 2,
     "The Verge": 9,
-    "ProPublica Congress": 1,
     "EFF Updates": 2
   },
-  "generated_at": "2026-05-14T16:47:08.499147+09:00"
+  "generated_at": "2026-05-14T18:37:23.929579+09:00"
 }
