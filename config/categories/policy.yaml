@@ -1,5 +1,54 @@
 category_name: "policy"
 display_name: "정책/약관 레이더"
+data_quality:
+  priority: P1
+  primary_motion: compliance-risk
+  weakest_dimension: verification
+  quality_outputs:
+    freshness_report: reports/policy_quality.json
+    dated_freshness_report_pattern: reports/policy_YYYYMMDD_quality.json
+    tracked_event_models:
+      - policy_notice
+      - regulatory_action
+      - legislative_progress
+      - terms_policy_change
+  event_models:
+    policy_notice:
+      fields: [issuer, jurisdiction, policy_topic, published_at, source_url]
+      notes: Agency, regulator, or institutional policy notices.
+    regulatory_action:
+      fields: [agency, action_type, affected_sector, effective_date, source_url]
+      notes: Enforcement, rulemaking, guidance, and regulator action signals.
+    legislative_progress:
+      fields: [jurisdiction, bill_or_rule_id, stage, action_date, source_url]
+      notes: Bill, rule, or parliamentary/congressional progress events.
+    terms_policy_change:
+      fields: [platform_or_org, policy_name, change_type, effective_date, source_url]
+      notes: Platform terms, privacy policy, and user agreement changes.
+  canonical_keys:
+    policy_item: [issuer, jurisdiction, policy_topic, source_url]
+    legislative_item: [jurisdiction, bill_or_rule_id, stage]
+    platform_policy: [platform_or_org, policy_name, effective_date]
+  freshness_sla:
+    policy_notice_days: 7
+    regulatory_action_days: 7
+    legislative_progress_days: 7
+    terms_policy_change_days: 14
+  quality_gates:
+    - Separate proposed policy, enacted rule, enforcement, and commentary layers.
+    - Keep jurisdiction and effective date before compliance-risk scoring.
+    - Cross-check high-impact policy claims against an official source where available.
+source_backlog:
+  official_candidates:
+    - id: federal_register_detail_api
+      name: Federal Register detail API
+      activation_gate: docket id mapping, action type taxonomy, and effective-date parser.
+    - id: congress_bill_status_api
+      name: Congress/bill status API
+      activation_gate: bill id normalization and stage transition dedupe.
+    - id: platform_terms_change_trackers
+      name: Platform terms/privacy change trackers
+      activation_gate: source authority review and effective-date extraction.
 
 sources:
   - name: "TechCrunch Policy"

@@ -22,7 +22,7 @@ PolicyRadar/
 │   └── mcp_server/               # MCP 서버 (server.py + tools.py)
 ├── config/
 │   ├── config.yaml               # database_path, report_dir, raw_data_dir, search_db_path
-│   └── categories/{domain}.yaml  # 소스 + 엔티티 정의
+│   └── categories/policy.yaml  # 소스 + 엔티티 정의
 ├── data/                         # DuckDB, search_index.db, raw/ JSONL
 ├── reports/                      # 생성된 HTML 리포트
 ├── tests/unit/                   # pytest 단위 테스트
@@ -34,14 +34,16 @@ PolicyRadar/
 
 | Entity | Examples |
 |--------|----------|
-| 주요 엔티티 1 | 예시 1, 예시 2, 예시 3 |
-| 주요 엔티티 2 | 예시 4, 예시 5, 예시 6 |
-| 주요 엔티티 3 | 예시 7, 예시 8, 예시 9 |
+| Privacy | 개인정보, data protection, GDPR |
+| TermsChange | terms update, 이용약관, policy change |
+| Regulation | bill, agency, regulation, 법률 |
+| Platform | Google, Apple, Meta, Microsoft |
 
 ## DEVIATIONS FROM TEMPLATE
 
-- 표준 템플릿 대비 특화 기능 1
-- 표준 템플릿 대비 특화 기능 2
+- 플랫폼 약관 변경, 개인정보 정책, 정부 규제/입법 source를 함께 추적한다.
+- 법안, 행정명령, 판결, 기관 보도자료를 각각 별도 정책 신호로 분류한다.
+- 정책/보안 분류체계 작업은 `PolicyRadar/docs/n2sf-classification-applicability.md`의 공식 등급과 내부 오버레이 구분을 따른다.
 
 ## COMMANDS
 

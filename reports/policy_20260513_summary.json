@@ -1,68 +1,61 @@
 {
   "date": "2026-05-13",
   "category": "policy",
-  "article_count": 143,
-  "source_count": 12,
-  "matched_count": 143,
+  "article_count": 23,
+  "source_count": 9,
+  "matched_count": 23,
   "top_entities": [
     {
       "name": "Regulation",
-      "count": 209
+      "count": 22
     },
     {
       "name": "Legislation",
-      "count": 97
-    },
-    {
-      "name": "Platform",
-      "count": 52
-    },
-    {
-      "name": "JudicialRuling",
-      "count": 45
-    },
-    {
-      "name": "ConsumerRights",
-      "count": 43
-    },
-    {
-      "name": "ExecutiveOrder",
-      "count": 32
-    },
-    {
-      "name": "FinancialRegulation",
-      "count": 16
-    },
-    {
-      "name": "Privacy",
       "count": 11
     },
     {
-      "name": "EnvironmentalPolicy",
+      "name": "Platform",
+      "count": 10
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 8
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 7
+    },
+    {
+      "name": "ExecutiveOrder",
       "count": 6
     },
     {
+      "name": "FinancialRegulation",
+      "count": 3
+    },
+    {
+      "name": "Privacy",
+      "count": 1
+    },
+    {
       "name": "LaborPolicy",
-      "count": 2
+      "count": 1
     },
     {
       "name": "AIPolicy",
-      "count": 2
+      "count": 1
     }
   ],
   "sources": {
-    "The Verge": 9,
-    "Reddit r/law": 23,
-    "Reddit r/politics": 9,
-    "Reddit r/technology (Tech Policy)": 12,
-    "EFF Updates": 7,
-    "The Hill": 37,
-    "White House Presidential Actions": 3,
-    "TechCrunch Policy": 14,
-    "ProPublica Congress": 3,
-    "GovInfo Bills": 20,
-    "금융위원회 보도설명": 2,
-    "금융위원회 보도자료": 4
+    "TechCrunch Policy": 1,
+    "The Verge": 3,
+    "Reddit r/technology (Tech Policy)": 3,
+    "금융위원회 보도자료": 1,
+    "금융위원회 보도설명": 1,
+    "Reddit r/law": 5,
+    "Reddit r/politics": 2,
+    "EFF Updates": 1,
+    "The Hill": 6
   },
-  "generated_at": "2026-05-13T09:07:27.872511+09:00"
+  "generated_at": "2026-05-13T21:28:11.002928+09:00"
 }
