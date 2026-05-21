@@ -1,0 +1,72 @@
+{
+  "date": "2026-05-21",
+  "category": "policy",
+  "article_count": 122,
+  "source_count": 12,
+  "matched_count": 122,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 166
+    },
+    {
+      "name": "Legislation",
+      "count": 79
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 46
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 37
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 28
+    },
+    {
+      "name": "FinancialRegulation",
+      "count": 28
+    },
+    {
+      "name": "Platform",
+      "count": 24
+    },
+    {
+      "name": "EnvironmentalPolicy",
+      "count": 9
+    },
+    {
+      "name": "Privacy",
+      "count": 6
+    },
+    {
+      "name": "TermsChange",
+      "count": 5
+    },
+    {
+      "name": "AIPolicy",
+      "count": 4
+    },
+    {
+      "name": "LaborPolicy",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "UK Parliament Bills": 9,
+    "The Hill": 48,
+    "The Verge": 6,
+    "Reddit r/law": 23,
+    "금융위원회 보도자료": 5,
+    "금융위원회 보도설명": 1,
+    "Reddit r/politics": 13,
+    "TechCrunch Policy": 8,
+    "Reddit r/technology (Tech Policy)": 6,
+    "White House Presidential Actions": 1,
+    "EFF Updates": 1,
+    "ProPublica Congress": 1
+  },
+  "generated_at": "2026-05-21T19:42:02.883115+09:00"
+}
