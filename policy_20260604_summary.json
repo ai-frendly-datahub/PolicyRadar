@@ -1,0 +1,67 @@
+{
+  "date": "2026-06-04",
+  "category": "policy",
+  "article_count": 150,
+  "source_count": 11,
+  "matched_count": 150,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 169
+    },
+    {
+      "name": "Legislation",
+      "count": 105
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 47
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 44
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 33
+    },
+    {
+      "name": "Platform",
+      "count": 28
+    },
+    {
+      "name": "FinancialRegulation",
+      "count": 10
+    },
+    {
+      "name": "Privacy",
+      "count": 7
+    },
+    {
+      "name": "AIPolicy",
+      "count": 7
+    },
+    {
+      "name": "LaborPolicy",
+      "count": 6
+    },
+    {
+      "name": "EnvironmentalPolicy",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "The Hill": 39,
+    "The Verge": 7,
+    "UK Parliament Bills": 16,
+    "Reddit r/law": 23,
+    "Reddit r/technology (Tech Policy)": 13,
+    "TechCrunch Policy": 15,
+    "GovInfo Bills": 14,
+    "Reddit r/politics": 18,
+    "금융위원회 보도자료": 2,
+    "금융위원회 보도설명": 1,
+    "White House Presidential Actions": 2
+  },
+  "generated_at": "2026-06-04T19:40:53.535086+09:00"
+}
