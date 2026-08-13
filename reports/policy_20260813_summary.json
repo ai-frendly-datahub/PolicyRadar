@@ -1,0 +1,70 @@
+{
+  "date": "2026-08-13",
+  "category": "policy",
+  "article_count": 158,
+  "source_count": 10,
+  "matched_count": 158,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 138
+    },
+    {
+      "name": "Legislation",
+      "count": 57
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 47
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 43
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 31
+    },
+    {
+      "name": "Platform",
+      "count": 22
+    },
+    {
+      "name": "LaborPolicy",
+      "count": 5
+    },
+    {
+      "name": "AIPolicy",
+      "count": 5
+    },
+    {
+      "name": "TermsChange",
+      "count": 3
+    },
+    {
+      "name": "EnvironmentalPolicy",
+      "count": 2
+    },
+    {
+      "name": "Privacy",
+      "count": 2
+    },
+    {
+      "name": "FinancialRegulation",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "Reddit r/law": 31,
+    "The Hill": 79,
+    "TechCrunch Policy": 13,
+    "White House Presidential Actions": 2,
+    "The Verge": 11,
+    "CDC Media Releases": 1,
+    "NIST Cybersecurity Insights": 1,
+    "ProPublica Congress": 1,
+    "GovInfo Bills": 18,
+    "EFF Updates": 1
+  },
+  "generated_at": "2026-08-13T17:23:22.157190+09:00"
+}
