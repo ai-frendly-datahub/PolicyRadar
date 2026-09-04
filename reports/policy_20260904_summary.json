@@ -1,0 +1,73 @@
+{
+  "date": "2026-09-04",
+  "category": "policy",
+  "article_count": 155,
+  "source_count": 13,
+  "matched_count": 155,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 185
+    },
+    {
+      "name": "Legislation",
+      "count": 108
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 45
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 44
+    },
+    {
+      "name": "Platform",
+      "count": 19
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 19
+    },
+    {
+      "name": "FinancialRegulation",
+      "count": 9
+    },
+    {
+      "name": "EnvironmentalPolicy",
+      "count": 6
+    },
+    {
+      "name": "Privacy",
+      "count": 4
+    },
+    {
+      "name": "AIPolicy",
+      "count": 3
+    },
+    {
+      "name": "LaborPolicy",
+      "count": 3
+    },
+    {
+      "name": "TermsChange",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "The Verge": 9,
+    "Reddit r/law": 26,
+    "UK Parliament Bills": 18,
+    "The Hill": 40,
+    "ProPublica Congress": 1,
+    "GovInfo Bills": 41,
+    "TechCrunch Policy": 9,
+    "CDC Media Releases": 1,
+    "SEC Press Releases": 2,
+    "FDA News Releases": 3,
+    "EFF Updates": 1,
+    "SEC Speeches": 3,
+    "UN News - Law and Crime": 1
+  },
+  "generated_at": "2026-09-04T21:01:53.301374+09:00"
+}
