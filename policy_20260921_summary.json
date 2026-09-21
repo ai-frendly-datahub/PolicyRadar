@@ -1,48 +1,48 @@
 {
-  "date": "2026-09-20",
+  "date": "2026-09-21",
   "category": "policy",
-  "article_count": 158,
+  "article_count": 151,
   "source_count": 13,
-  "matched_count": 158,
+  "matched_count": 151,
   "top_entities": [
     {
       "name": "Regulation",
-      "count": 187
+      "count": 190
     },
     {
       "name": "Legislation",
-      "count": 102
+      "count": 103
     },
     {
       "name": "ConsumerRights",
-      "count": 60
+      "count": 62
     },
     {
       "name": "ExecutiveOrder",
-      "count": 51
+      "count": 40
     },
     {
       "name": "JudicialRuling",
-      "count": 31
+      "count": 29
     },
     {
       "name": "Platform",
-      "count": 22
+      "count": 25
     },
     {
       "name": "Privacy",
       "count": 10
     },
     {
-      "name": "FinancialRegulation",
-      "count": 9
-    },
-    {
       "name": "AIPolicy",
       "count": 7
     },
     {
-      "name": "EnvironmentalPolicy",
+      "name": "FinancialRegulation",
+      "count": 7
+    },
+    {
+      "name": "TermsChange",
       "count": 3
     },
     {
@@ -50,24 +50,24 @@
       "count": 2
     },
     {
-      "name": "TermsChange",
-      "count": 2
+      "name": "EnvironmentalPolicy",
+      "count": 1
     }
   ],
   "sources": {
-    "The Verge": 5,
-    "The Hill": 41,
     "Reddit r/law": 23,
-    "TechCrunch Policy": 8,
-    "EFF Updates": 6,
-    "White House Presidential Actions": 9,
-    "ProPublica Congress": 2,
+    "The Hill": 30,
+    "The Verge": 10,
+    "FDA News Releases": 2,
+    "EFF Updates": 7,
+    "ProPublica Congress": 3,
+    "TechCrunch Policy": 6,
+    "White House Presidential Actions": 7,
     "UK Parliament Bills": 10,
     "SEC Speeches": 5,
     "UN News - Law and Crime": 1,
     "GovInfo Bills": 46,
-    "FDA News Releases": 1,
     "SEC Press Releases": 1
   },
-  "generated_at": "2026-09-20T21:05:43.764058+09:00"
+  "generated_at": "2026-09-21T22:44:39.973246+09:00"
 }
