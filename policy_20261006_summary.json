@@ -1,67 +1,65 @@
 {
   "date": "2026-10-06",
   "category": "policy",
-  "article_count": 156,
-  "source_count": 7,
-  "matched_count": 156,
+  "article_count": 155,
+  "source_count": 9,
+  "matched_count": 155,
   "top_entities": [
     {
       "name": "Regulation",
-      "count": 141
-    },
-    {
-      "name": "JudicialRuling",
-      "count": 100
+      "count": 126
     },
     {
       "name": "Legislation",
-      "count": 62
+      "count": 68
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 65
     },
     {
       "name": "ConsumerRights",
-      "count": 35
-    },
-    {
-      "name": "Platform",
-      "count": 28
+      "count": 56
     },
     {
       "name": "ExecutiveOrder",
-      "count": 27
+      "count": 26
     },
     {
-      "name": "EnvironmentalPolicy",
-      "count": 10
-    },
-    {
-      "name": "Privacy",
-      "count": 5
-    },
-    {
-      "name": "AIPolicy",
-      "count": 5
+      "name": "Platform",
+      "count": 23
     },
     {
       "name": "FinancialRegulation",
+      "count": 5
+    },
+    {
+      "name": "EnvironmentalPolicy",
       "count": 4
     },
     {
       "name": "LaborPolicy",
-      "count": 2
+      "count": 3
     },
     {
-      "name": "TermsChange",
+      "name": "AIPolicy",
+      "count": 3
+    },
+    {
+      "name": "Privacy",
       "count": 2
     }
   ],
   "sources": {
-    "Reddit r/law": 48,
-    "The Hill": 76,
-    "TechCrunch Policy": 12,
-    "The Verge": 15,
-    "UK Parliament Bills": 3,
+    "TechCrunch Policy": 6,
+    "The Verge": 14,
+    "The Hill": 60,
+    "Reddit r/law": 29,
+    "GovInfo Bills": 37,
+    "White House Presidential Actions": 1,
+    "UK Parliament Bills": 6,
     "FDA News Releases": 1,
     "SEC Press Releases": 1
   },
-  "generated_at": "2026-10-06T00:40:11.378236+09:00"
+  "generated_at": "2026-10-06T23:01:38.014718+09:00"
 }
