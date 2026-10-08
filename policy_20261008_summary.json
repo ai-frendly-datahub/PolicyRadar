@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-08",
+  "category": "policy",
+  "article_count": 160,
+  "source_count": 8,
+  "matched_count": 160,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 144
+    },
+    {
+      "name": "Legislation",
+      "count": 89
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 46
+    },
+    {
+      "name": "Platform",
+      "count": 33
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 28
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 28
+    },
+    {
+      "name": "Privacy",
+      "count": 3
+    },
+    {
+      "name": "FinancialRegulation",
+      "count": 3
+    },
+    {
+      "name": "EnvironmentalPolicy",
+      "count": 3
+    },
+    {
+      "name": "TermsChange",
+      "count": 2
+    },
+    {
+      "name": "LaborPolicy",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "The Verge": 17,
+    "The Hill": 51,
+    "Reddit r/law": 26,
+    "UK Parliament Bills": 10,
+    "TechCrunch Policy": 13,
+    "NIST News": 1,
+    "GovInfo Bills": 40,
+    "White House Presidential Actions": 2
+  },
+  "generated_at": "2026-10-08T23:27:21.447215+09:00"
+}
