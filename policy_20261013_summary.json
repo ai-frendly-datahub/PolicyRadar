@@ -1,49 +1,41 @@
 {
   "date": "2026-10-13",
   "category": "policy",
-  "article_count": 143,
+  "article_count": 151,
   "source_count": 7,
-  "matched_count": 143,
+  "matched_count": 151,
   "top_entities": [
     {
       "name": "Regulation",
-      "count": 148
+      "count": 169
     },
     {
       "name": "Legislation",
-      "count": 59
-    },
-    {
-      "name": "ConsumerRights",
-      "count": 45
+      "count": 80
     },
     {
       "name": "JudicialRuling",
-      "count": 41
+      "count": 69
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 44
     },
     {
       "name": "ExecutiveOrder",
-      "count": 25
+      "count": 32
     },
     {
       "name": "Platform",
-      "count": 18
+      "count": 29
     },
     {
       "name": "FinancialRegulation",
-      "count": 11
+      "count": 9
     },
     {
       "name": "LaborPolicy",
       "count": 6
-    },
-    {
-      "name": "Privacy",
-      "count": 5
-    },
-    {
-      "name": "TermsChange",
-      "count": 4
     },
     {
       "name": "AIPolicy",
@@ -51,17 +43,25 @@
     },
     {
       "name": "EnvironmentalPolicy",
-      "count": 1
+      "count": 2
+    },
+    {
+      "name": "Privacy",
+      "count": 2
+    },
+    {
+      "name": "TermsChange",
+      "count": 2
     }
   ],
   "sources": {
-    "The Hill": 65,
-    "UK Parliament Bills": 9,
-    "TechCrunch Policy": 10,
+    "UK Parliament Bills": 20,
+    "TechCrunch Policy": 13,
+    "The Hill": 57,
     "Reddit r/law": 41,
-    "The Verge": 16,
-    "UN News - Law and Crime": 1,
-    "ProPublica Congress": 1
+    "The Verge": 17,
+    "ProPublica Congress": 2,
+    "UN News - Law and Crime": 1
   },
-  "generated_at": "2026-10-13T01:34:58.639309+09:00"
+  "generated_at": "2026-10-13T23:53:25.384180+09:00"
 }
