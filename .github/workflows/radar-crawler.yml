@@ -22,6 +22,7 @@ concurrency:
 jobs:
   run-and-deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     
     steps:
       - name: Checkout
@@ -117,7 +118,9 @@ jobs:
           fi
 
       - name: Auto-commit data updates
-        continue-on-error: true
+        # Intentionally NOT continue-on-error: a rejected push (e.g. LFS budget exceeded)
+        # must fail the job so the failure is visible instead of a silent "success".
+        id: auto-commit
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: update radar data [skip ci]"
