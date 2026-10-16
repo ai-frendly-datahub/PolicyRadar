@@ -1,41 +1,41 @@
 {
   "date": "2026-10-16",
   "category": "policy",
-  "article_count": 158,
-  "source_count": 12,
-  "matched_count": 158,
+  "article_count": 156,
+  "source_count": 14,
+  "matched_count": 156,
   "top_entities": [
     {
       "name": "Regulation",
-      "count": 182
+      "count": 173
     },
     {
       "name": "Legislation",
-      "count": 91
+      "count": 98
     },
     {
       "name": "JudicialRuling",
-      "count": 83
+      "count": 63
     },
     {
       "name": "ConsumerRights",
-      "count": 46
-    },
-    {
-      "name": "Platform",
-      "count": 42
+      "count": 44
     },
     {
       "name": "ExecutiveOrder",
-      "count": 32
+      "count": 38
     },
     {
-      "name": "Privacy",
+      "name": "Platform",
       "count": 23
     },
     {
+      "name": "Privacy",
+      "count": 19
+    },
+    {
       "name": "FinancialRegulation",
-      "count": 8
+      "count": 7
     },
     {
       "name": "LaborPolicy",
@@ -55,18 +55,20 @@
     }
   ],
   "sources": {
-    "EFF Updates": 7,
-    "The Hill": 51,
-    "Reddit r/law": 31,
-    "The Verge": 16,
-    "TechCrunch Policy": 15,
+    "The Verge": 9,
+    "The Hill": 48,
+    "UK Parliament Bills": 26,
+    "Reddit r/law": 29,
+    "Reddit r/politics": 15,
+    "TechCrunch Policy": 9,
+    "EFF Updates": 5,
     "CDC Media Releases": 1,
-    "UK Parliament Bills": 30,
     "ProPublica Congress": 3,
+    "FDA News Releases": 1,
     "SEC Press Releases": 1,
     "NIST Cybersecurity Insights": 1,
-    "CFPB Newsroom": 1,
-    "SEC Speeches": 1
+    "GovInfo Bills": 7,
+    "CFPB Newsroom": 1
   },
-  "generated_at": "2026-10-16T09:22:48.802208+09:00"
+  "generated_at": "2026-10-16T21:09:29.923813+09:00"
 }
