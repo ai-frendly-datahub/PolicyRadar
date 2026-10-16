@@ -180,6 +180,12 @@ reports/data/*.duckdb
 data/raw/
 !data/raw/.gitkeep
 data/search_index.db*
+# Writable DuckDB when the tracked file is still an LFS pointer.
+data/work/
+# Parquet rows that exceed the 50MB git budget, uploaded as a Release asset.
+data/release/
+*.lfspointer
+data/parquet/**/*.partial
 reports/*.html
 !reports/.gitkeep
 docs/reports/*.html

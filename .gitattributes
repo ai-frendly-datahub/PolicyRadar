@@ -1,2 +1,5 @@
-data/daily/*.duckdb filter=lfs diff=lfs merge=lfs -text
-data/*.duckdb filter=lfs diff=lfs merge=lfs -text
+# Historical DuckDB blobs stay in git as LFS pointer text. Do not put
+# filter=lfs back on these paths: a push would upload to the exhausted LFS
+# budget. The pointer files themselves are still tracked so history is intact.
+# New article snapshots live in data/parquet/ as ordinary Git blobs.
+data/parquet/** -filter -diff -merge -text

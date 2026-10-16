@@ -8,6 +8,7 @@ from collections.abc import Mapping
 from concurrent.futures import Future, ThreadPoolExecutor
 from datetime import UTC, datetime
 from email.utils import parsedate_to_datetime
+from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
@@ -21,6 +22,7 @@ from urllib3.util.retry import Retry
 
 from .exceptions import NetworkError, ParseError, SourceError
 from .models import Article, Source
+from .parquet_store import resolve_writable_database
 from .resilience import get_circuit_breaker_manager
 
 
@@ -197,9 +199,11 @@ def collect_sources(
         host: RateLimiter(min_interval=min_interval_per_host) for host in set(source_hosts.values())
     }
     throttler = AdaptiveThrottler(min_delay=max(0.001, min_interval_per_host))
-    health_store = CrawlHealthStore(
+    configured_health_db = Path(
         health_db_path or os.environ.get("RADAR_CRAWL_HEALTH_DB_PATH", _DEFAULT_HEALTH_DB_PATH)
     )
+    # An LFS pointer is not a database. Keep the pointer and open the writable copy.
+    health_store = CrawlHealthStore(str(resolve_writable_database(configured_health_db)))
     _set_collection_controls(throttler, health_store)
     session = _create_session()
 

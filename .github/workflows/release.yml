@@ -21,6 +21,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          lfs: false
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -54,17 +55,18 @@ jobs:
             ${{ steps.changelog.outputs.changelog }}
             
             ## Database Snapshots
-            DuckDB database snapshots are available in the artifacts section.
+            Parquet snapshots under data/parquet are attached as artifacts.
+            Historical DuckDB files remain in git as LFS pointers and in the data-lfs-archive release.
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Archive DuckDB for release
+      - name: Archive Parquet for release
         uses: actions/upload-artifact@v4
         with:
-          name: release-db-${{ github.ref_name }}
-          path: data/*.duckdb
+          name: release-parquet-${{ github.ref_name }}
+          path: data/parquet/
           retention-days: 90
           if-no-files-found: ignore
 

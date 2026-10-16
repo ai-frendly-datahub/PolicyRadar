@@ -41,7 +41,9 @@
   - 스케줄: 매일 00:00 UTC (KST 09:00), 수동 실행도 지원.
   - 환경 변수 `RADAR_CATEGORY` 값은 `policy`입니다.
   - 리포트 배포 디렉터리: `reports` → `gh-pages` 브랜치로 배포.
-  - DuckDB 경로: `data/radar_data.duckdb` (Pages에 올라가지 않음). 아티팩트로 7일 보관.
+  - 체크아웃은 Git LFS를 받지 않습니다. 커밋되는 기사 스냅샷은 `data/parquet/articles.parquet` (zstd, 50MB 미만)입니다.
+  - 기존 `data/*.duckdb`, `data/daily/*.duckdb` 포인터는 저장소에 그대로 있습니다. 실파일은 Release `data-lfs-archive`에 있습니다.
+  - 50MB를 넘는 분은 Release `data-overflow` 에셋으로 올립니다. 작업용 DuckDB는 `data/work/`에만 있고 Git에는 올리지 않습니다.
 
 - 설정 방법:
   1) 저장소 Settings → Pages에서 `gh-pages` 브랜치를 선택해 활성화
@@ -56,7 +58,8 @@
 
 ## 기본 경로
 
-- DB: `data/radar_data.duckdb`
+- 작업용 DB: `data/radar_data.duckdb`가 LFS 포인터이면 `data/work/radar_data.duckdb`
+- Git 스냅샷: `data/parquet/articles.parquet`
 - 리포트 출력: `reports/`
 
 ## 디렉터리 구성

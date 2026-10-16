@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import argparse
+import os
 from datetime import UTC
 from pathlib import Path
 from typing import cast
+
 from radar_core.config_loader import filter_sources
 
 from policyradar.analyzer import apply_entity_rules
@@ -11,6 +13,7 @@ from policyradar.collector import collect_sources
 from policyradar.common.validators import validate_article
 from policyradar.config_loader import load_category_config, load_settings
 from policyradar.date_storage import apply_date_storage_policy
+from policyradar.parquet_store import resolve_writable_database
 from policyradar.raw_logger import RawLogger
 from policyradar.reporter import generate_index_html, generate_report
 from policyradar.search_index import SearchIndex
@@ -26,7 +29,6 @@ def _send_notifications(
     errors_count: int,
     report_path: Path,
 ) -> None:
-    import os
     from datetime import datetime
 
     email_to = os.environ.get("NOTIFICATION_EMAIL")
@@ -89,6 +91,12 @@ def run(
 ) -> Path:
     """Execute the lightweight collect -> analyze -> report pipeline."""
     settings = load_settings(config_path)
+    working_db = resolve_writable_database(
+        settings.database_path, raw_data_dir=settings.raw_data_dir
+    )
+    # Crawl health shares the writable database so an LFS pointer at the
+    # configured path is never opened or replaced.
+    os.environ["RADAR_CRAWL_HEALTH_DB_PATH"] = str(working_db)
     category_cfg = load_category_config(category, categories_dir=categories_dir)
 
     effective_sources = filter_sources(
@@ -125,7 +133,7 @@ def run(
         else:
             validation_errors.append(f"{article.link}: {', '.join(errors)}")
 
-    storage = RadarStorage(settings.database_path)
+    storage = RadarStorage(working_db)
     storage.upsert_articles(validated_articles)
     errors.extend(validation_errors)
     _ = storage.delete_older_than(keep_days)
@@ -156,17 +164,25 @@ def run(
     # Generate index.html
     generate_index_html(settings.report_dir)
     date_storage = apply_date_storage_policy(
-        database_path=settings.database_path,
+        database_path=working_db,
         raw_data_dir=settings.raw_data_dir,
         report_dir=settings.report_dir,
         keep_raw_days=keep_raw_days,
         keep_report_days=keep_report_days,
         snapshot_db=snapshot_db,
+        parquet_root=settings.database_path.parent / "parquet",
     )
     print(f"[Radar] Report generated at {output_path}")
     snapshot_path = date_storage.get("snapshot_path")
     if isinstance(snapshot_path, str) and snapshot_path:
-        print(f"[Radar] Snapshot saved at {snapshot_path}")
+        print(
+            f"[Radar] Parquet snapshot saved at {snapshot_path}"
+            f" ({date_storage.get('parquet_bytes')} bytes,"
+            f" rows={date_storage.get('rows_kept')})"
+        )
+    overflow_path = date_storage.get("overflow_path")
+    if isinstance(overflow_path, str) and overflow_path:
+        print(f"[Radar] Parquet overflow for GitHub Release: {overflow_path}")
     if errors:
         print(f"[Radar] {len(errors)} source(s) had issues. See report for details.")
 
@@ -215,7 +231,7 @@ def parse_args() -> argparse.Namespace:
         "--snapshot-db",
         action="store_true",
         default=False,
-        help="Create a dated DuckDB snapshot after each run",
+        help="Write a zstd Parquet snapshot under 50MB. Does not commit DuckDB.",
     )
     _ = parser.add_argument(
         "--generate-report",
@@ -258,8 +274,6 @@ def _to_int(value: object, default: int) -> int:
     return default
 
 
-
-
 def _to_optional_int(value: object) -> int | None:
     if value is None:
         return None
@@ -279,6 +293,8 @@ def _to_str_list(value: object) -> list[str]:
     if isinstance(value, list):
         return [str(item) for item in cast(list[object], value) if isinstance(item, str)]
     return []
+
+
 if __name__ == "__main__":
     args = cast(dict[str, object], vars(parse_args()))
     _ = run(

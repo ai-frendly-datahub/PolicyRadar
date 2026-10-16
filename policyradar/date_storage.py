@@ -79,17 +79,13 @@ def cleanup_dated_reports(report_dir: Path, *, keep_days: int, today: date | Non
     return removed
 
 
-
-
-def cleanup_daily_snapshots(
-    daily_dir: Path, *, keep_days: int, today: date | None = None
-) -> int:
+def cleanup_daily_snapshots(daily_dir: Path, *, keep_days: int, today: date | None = None) -> int:
     if keep_days < 0 or not daily_dir.exists():
         return 0
     cutoff = (today or datetime.now(UTC).date()) - timedelta(days=keep_days)
     removed = 0
     for item in daily_dir.iterdir():
-        if not item.is_file() or not item.name.endswith('.duckdb'):
+        if not item.is_file() or not item.name.endswith(".duckdb"):
             continue
         try:
             stamp = date.fromisoformat(item.stem)
@@ -100,6 +96,7 @@ def cleanup_daily_snapshots(
             removed += 1
     return removed
 
+
 def apply_date_storage_policy(
     *,
     database_path: Path,
@@ -109,15 +106,35 @@ def apply_date_storage_policy(
     keep_report_days: int,
     snapshot_db: bool,
     keep_daily_days: int = 30,
+    parquet_root: Path | None = None,
 ) -> dict[str, object]:
-    """Apply date-based storage policy: snapshot, cleanup raw data, cleanup reports."""
-    snapshot_path = snapshot_database(database_path) if snapshot_db else None
+    """Snapshot articles to Parquet and clean raw files and HTML reports.
+
+    Historical DuckDB snapshots are not deleted. ``cleanup_daily_snapshots``
+    remains available for a manual rollback, and the scheduled path does not
+    call it.
+    """
+    parquet_info: dict[str, object] = {}
+    if snapshot_db:
+        from policyradar.parquet_store import export_articles_parquet
+
+        parquet_info = export_articles_parquet(
+            database_path,
+            parquet_root=parquet_root,
+            keep_daily_days=keep_daily_days,
+        )
     raw_removed = cleanup_date_directories(raw_data_dir, keep_days=keep_raw_days)
     report_removed = cleanup_dated_reports(report_dir, keep_days=keep_report_days)
-    daily_removed = cleanup_daily_snapshots(database_path.parent / "daily", keep_days=keep_daily_days)
     return {
-        "snapshot_path": str(snapshot_path) if snapshot_path is not None else None,
+        "snapshot_path": parquet_info.get("parquet_path"),
         "raw_removed": raw_removed,
         "report_removed": report_removed,
-        "daily_removed": daily_removed,
+        "daily_removed": parquet_info.get("daily_removed", 0),
+        "duckdb_snapshots_removed": 0,
+        "parquet_path": parquet_info.get("parquet_path"),
+        "parquet_bytes": parquet_info.get("parquet_bytes", 0),
+        "overflow_path": parquet_info.get("overflow_path"),
+        "rows_kept": parquet_info.get("rows_kept", 0),
+        "rows_overflow": parquet_info.get("rows_overflow", 0),
+        "truncated": parquet_info.get("truncated", False),
     }
