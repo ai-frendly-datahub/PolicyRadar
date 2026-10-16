@@ -13,8 +13,9 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-
 from radar_core.storage import RadarStorage
+
+from policyradar.parquet_store import resolve_writable_database
 
 
 @dataclass
@@ -66,7 +67,7 @@ class AlertMonitor:
             db_path: Path to the DuckDB database
             config_path: Path to the alert configuration YAML file
         """
-        self.db_path = db_path
+        self.db_path = resolve_writable_database(db_path)
         self.config = self._load_config(config_path)
 
     def _load_config(self, config_path: Path | None) -> AlertConfig:
@@ -287,9 +288,7 @@ def main() -> None:
     import json
     import sys
 
-    parser = argparse.ArgumentParser(
-        description="Scan PolicyRadar database for policy changes"
-    )
+    parser = argparse.ArgumentParser(description="Scan PolicyRadar database for policy changes")
     parser.add_argument(
         "--db-path",
         type=Path,

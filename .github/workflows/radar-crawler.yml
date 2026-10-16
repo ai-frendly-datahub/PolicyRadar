@@ -14,6 +14,9 @@ env:
   RADAR_CATEGORY: policy  # Update per project
   TZ: Asia/Seoul
   PYTHON_VERSION: "3.11"
+  # Never smudge historical DuckDB pointers. The LFS budget is exhausted and
+  # will not be increased; new snapshots are Parquet in normal Git.
+  GIT_LFS_SKIP_SMUDGE: "1"
 
 concurrency:
   group: radar-collection
@@ -28,7 +31,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          lfs: true
+          lfs: false
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -49,6 +52,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install "radar-core @ git+https://github.com/ai-frendly-datahub/radar-core.git@main"
           pip install -r requirements.txt
+
+      - name: Download Parquet overflow from GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p data/release
+          if gh release view data-overflow --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            gh release download data-overflow \
+              --repo "${GITHUB_REPOSITORY}" \
+              --pattern "*.parquet" \
+              --dir data/release \
+              --clobber
+          else
+            echo "No data-overflow release yet."
+          fi
 
       - name: Run Radar
         run: |
@@ -110,6 +129,7 @@ jobs:
             if find "data/raw/$d" -type f ! -name ".gitkeep" -print -quit 2>/dev/null | grep -q .; then found=1; fi
             if find "data/snapshots/$d" -type f ! -name ".gitkeep" -print -quit 2>/dev/null | grep -q .; then found=1; fi
             if find "data/daily" -maxdepth 1 -type f -name "$d*" -print -quit 2>/dev/null | grep -q .; then found=1; fi
+            if find "data/parquet" -type f -name "*$d*.parquet" -print -quit 2>/dev/null | grep -q .; then found=1; fi
           done
           if [ "$found" -eq 0 ]; then
             echo "::error::No dated data artifact found for UTC/KST dates: $dates"
@@ -117,14 +137,50 @@ jobs:
             exit 1
           fi
 
+      - name: Upload Parquet overflow to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ ! -f data/release/UPLOAD ]; then
+            echo "No overflow Parquet to publish."
+            exit 0
+          fi
+          if ! gh release view data-overflow --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            gh release create data-overflow \
+              --repo "${GITHUB_REPOSITORY}" \
+              --target "${GITHUB_SHA}" \
+              --title "PolicyRadar Parquet overflow" \
+              --notes "Compressed Parquet rows that do not fit in the 50MB git snapshot. Historical DuckDB LFS pointers stay in the repository."
+          fi
+          while IFS= read -r name; do
+            [ -n "$name" ] || continue
+            gh release upload data-overflow \
+              --repo "${GITHUB_REPOSITORY}" \
+              --clobber \
+              "data/release/${name}"
+          done < data/release/UPLOAD
+
+      - name: Restore historical DuckDB pointers
+        run: |
+          set -euo pipefail
+          export GIT_LFS_SKIP_SMUDGE=1
+          tracked=()
+          while IFS= read -r -d '' file; do
+            tracked+=("$file")
+          done < <(git ls-files -z -- 'data/*.duckdb' 'data/daily/*.duckdb')
+          if [ ${#tracked[@]} -gt 0 ]; then
+            git -c filter.lfs.smudge= -c filter.lfs.process= -c filter.lfs.required=false checkout -- "${tracked[@]}"
+          fi
+
       - name: Auto-commit data updates
-        # Intentionally NOT continue-on-error: a rejected push (e.g. LFS budget exceeded)
-        # must fail the job so the failure is visible instead of a silent "success".
+        # A rejected push still fails the job. DuckDB paths are excluded so this
+        # step does not upload Git LFS objects.
         id: auto-commit
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: update radar data [skip ci]"
-          file_pattern: "data/ reports/ :(exclude)data/search_index.db*"
+          file_pattern: "data/parquet/ data/raw/ reports/ :(exclude)data/**/*.duckdb :(exclude)data/*.duckdb :(exclude)data/release/** :(exclude)data/work/** :(exclude)data/search_index.db* :(exclude)*.lfspointer"
           add_options: "-f"
           skip_fetch: false
           skip_checkout: false
@@ -145,7 +201,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: radar-db-${{ github.run_number }}
-          path: data/radar_data.duckdb
+          path: |
+            data/work/radar_data.duckdb
+            data/radar_data.duckdb
           retention-days: 30
           if-no-files-found: ignore
 
@@ -171,9 +229,13 @@ jobs:
           if [ -f "reports/index.html" ]; then
             echo "✅ Report generated successfully" >> $GITHUB_STEP_SUMMARY
           fi
-          if [ -f "data/radar_data.duckdb" ]; then
-            SIZE=$(du -h data/radar_data.duckdb | cut -f1)
-            echo "✅ Database backed up ($SIZE)" >> $GITHUB_STEP_SUMMARY
+          if [ -f "data/parquet/articles.parquet" ]; then
+            SIZE=$(du -h data/parquet/articles.parquet | cut -f1)
+            echo "✅ Parquet snapshot ($SIZE)" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ -f "data/work/radar_data.duckdb" ]; then
+            SIZE=$(du -h data/work/radar_data.duckdb | cut -f1)
+            echo "✅ Working DuckDB backed up ($SIZE)" >> $GITHUB_STEP_SUMMARY
           fi
 
       - name: Notify on failure

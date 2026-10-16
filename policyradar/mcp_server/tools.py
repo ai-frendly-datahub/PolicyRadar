@@ -7,9 +7,8 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import cast
 
-import duckdb
-
 from policyradar.nl_query import parse_query
+from policyradar.parquet_store import connect_readonly
 from policyradar.search_index import SearchIndex
 
 
@@ -38,7 +37,7 @@ def _filter_links_by_days(*, db_path: Path, links: list[str], days: int) -> set[
         return set()
     cutoff = datetime.now(tz=UTC) - timedelta(days=days)
     placeholders = ", ".join("?" for _ in links)
-    conn = duckdb.connect(str(db_path), read_only=True)
+    conn = connect_readonly(db_path)
     try:
         cursor = conn.execute(
             f"""
@@ -90,7 +89,7 @@ def handle_recent_updates(*, db_path: Path, days: int = 7, limit: int = 20) -> s
         return "No recent updates found."
 
     cutoff = datetime.now(tz=UTC) - timedelta(days=days)
-    conn = duckdb.connect(str(db_path), read_only=True)
+    conn = connect_readonly(db_path)
     try:
         cursor = conn.execute(
             """
@@ -120,7 +119,7 @@ def handle_sql(*, db_path: Path, query: str) -> str:
     if not _ALLOWED_SQL.match(query):
         return "Error: Only SELECT/WITH/EXPLAIN queries are allowed."
 
-    conn = duckdb.connect(str(db_path), read_only=True)
+    conn = connect_readonly(db_path)
     try:
         cursor = conn.execute(query)
         rows = cursor.fetchall()
@@ -138,7 +137,7 @@ def handle_top_trends(*, db_path: Path, days: int = 7, limit: int = 10) -> str:
         return "No trend data available."
 
     cutoff = datetime.now(tz=UTC) - timedelta(days=days)
-    conn = duckdb.connect(str(db_path), read_only=True)
+    conn = connect_readonly(db_path)
     try:
         rows = conn.execute(
             """
@@ -179,7 +178,7 @@ def handle_top_trends(*, db_path: Path, days: int = 7, limit: int = 10) -> str:
 def handle_change_detect(*, db_path: Path, days: int = 14, limit: int = 10) -> str:
     """Detect policy or terms changes from recent article analysis."""
     cutoff = datetime.now(tz=UTC) - timedelta(days=days)
-    conn = duckdb.connect(str(db_path), read_only=True)
+    conn = connect_readonly(db_path)
     try:
         rows = conn.execute(
             """

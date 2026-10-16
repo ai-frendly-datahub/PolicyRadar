@@ -6,13 +6,12 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-import duckdb
-
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from policyradar.common.quality_checks import run_all_checks  # noqa: E402
+from policyradar.parquet_store import connect_readonly  # noqa: E402
 
 
 def main() -> None:
@@ -21,7 +20,7 @@ def main() -> None:
         print(f"Database not found: {db_path}")
         sys.exit(1)
 
-    with duckdb.connect(str(db_path), read_only=True) as con:
+    with connect_readonly(db_path) as con:
         run_all_checks(
             con,
             table_name="articles",

@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-16",
+  "category": "policy",
+  "article_count": 158,
+  "source_count": 12,
+  "matched_count": 158,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 182
+    },
+    {
+      "name": "Legislation",
+      "count": 91
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 83
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 46
+    },
+    {
+      "name": "Platform",
+      "count": 42
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 32
+    },
+    {
+      "name": "Privacy",
+      "count": 23
+    },
+    {
+      "name": "FinancialRegulation",
+      "count": 8
+    },
+    {
+      "name": "LaborPolicy",
+      "count": 4
+    },
+    {
+      "name": "EnvironmentalPolicy",
+      "count": 4
+    },
+    {
+      "name": "AIPolicy",
+      "count": 2
+    },
+    {
+      "name": "TermsChange",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "EFF Updates": 7,
+    "The Hill": 51,
+    "Reddit r/law": 31,
+    "The Verge": 16,
+    "TechCrunch Policy": 15,
+    "CDC Media Releases": 1,
+    "UK Parliament Bills": 30,
+    "ProPublica Congress": 3,
+    "SEC Press Releases": 1,
+    "NIST Cybersecurity Insights": 1,
+    "CFPB Newsroom": 1,
+    "SEC Speeches": 1
+  },
+  "generated_at": "2026-10-16T09:22:48.802208+09:00"
+}
