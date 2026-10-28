@@ -50,19 +50,43 @@ source_backlog:
       name: Platform terms/privacy change trackers
       activation_gate: source authority review and effective-date extraction.
 
+# include_keywords: 제목과 요약에 키워드가 하나도 없으면 건너뛴다. 필드가 없으면 통과.
+# 대소문자는 구분하지 않고, 짧은 토큰이 다른 단어에 끼지 않도록 단어 경계로 맞춘다.
+# TechCrunch Policy URL은 사이트 전체 피드(techcrunch.com/feed/)다.
+# 정책 카테고리로 바꾸는 후보(2026-10-28 공개 확인, HTTP 200 RSS):
+#   https://techcrunch.com/category/government-policy/feed/
+#   채널 제목 "Tech Policy & Government | TechCrunch"
+# 이번 변경에서는 URL을 유지하고 include_keywords만 적용한다.
 sources:
   - name: "TechCrunch Policy"
     type: "rss"
     url: "https://techcrunch.com/feed/"
+    include_keywords: &policy_include_keywords
+      - "privacy"
+      - "regulation"
+      - "regulator"
+      - "antitrust"
+      - "FTC"
+      - "FCC"
+      - "SEC"
+      - "bill"
+      - "law"
+      - "lawsuit"
+      - "ruling"
+      - "executive order"
+      - "AI policy"
+      - "terms of service"
   - name: "The Verge"
     type: "rss"
     url: "https://www.theverge.com/rss/index.xml"
+    include_keywords: *policy_include_keywords
   - name: "EFF Updates"
     type: "rss"
     url: "https://www.eff.org/rss/updates.xml"
   - name: "The Hill"
     type: "rss"
     url: "https://thehill.com/feed/"
+    include_keywords: *policy_include_keywords
   - name: "White House Presidential Actions"
     type: "rss"
     url: "https://www.whitehouse.gov/presidential-actions/feed/"
@@ -87,23 +111,36 @@ sources:
   - name: "GovInfo Bills"
     type: "rss"
     url: "https://www.govinfo.gov/rss/bills.xml"
-  - name: "GovInfo Federal Register"
-    type: "rss"
-    url: "https://www.govinfo.gov/rss/fr.xml"
+  # NOTE: 2026-10-28 주석 처리.
+  # RSS summary는 "Content Files / Metadata download" 링크 목록뿐이고,
+  # 제목은 2~4개월 전 Federal Register 권호만 보여 분류 노이즈가 100%였다.
+  # policyradar/collector.py는 Source.enabled를 읽지 않는다.
+  # (radar_core 로더/수집기는 enabled를 보지만, main.py는 이 저장소 수집기를 쓴다.)
+  # - name: "GovInfo Federal Register"
+  #   type: "rss"
+  #   url: "https://www.govinfo.gov/rss/fr.xml"
   - name: "GovInfo Public and Private Laws"
     type: "rss"
     url: "https://www.govinfo.gov/rss/plaw.xml"
-  - name: "GovInfo Congressional Reports"
-    type: "rss"
-    url: "https://www.govinfo.gov/rss/crpt.xml"
+  # NOTE: 2026-10-28 주석 처리.
+  # Congressional Reports도 오래된 문서 제목만 반복되고 분류 노이즈가 100%였다.
+  # 수집기가 enabled를 읽지 않으므로 enabled: false 대신 주석 처리한다.
+  # - name: "GovInfo Congressional Reports"
+  #   type: "rss"
+  #   url: "https://www.govinfo.gov/rss/crpt.xml"
 
   # === Reddit Policy Discussions ===
-  - name: "Reddit r/law"
-    type: "rss"
-    url: "https://www.reddit.com/r/law/.rss"
-  - name: "Reddit r/politics"
-    type: "rss"
-    url: "https://www.reddit.com/r/politics/.rss"
+  # NOTE: 2026-10-28 robots_disallowed.
+  # https://www.reddit.com/robots.txt 재확인 결과:
+  #   User-agent: *
+  #   Disallow: /
+  # 전체 경로가 막혀 있으므로 r/law, r/politics RSS는 수집하지 않는다. reason: robots_disallowed.
+  # - name: "Reddit r/law"
+  #   type: "rss"
+  #   url: "https://www.reddit.com/r/law/.rss"
+  # - name: "Reddit r/politics"
+  #   type: "rss"
+  #   url: "https://www.reddit.com/r/politics/.rss"
   - name: "Reddit r/technology (Tech Policy)"
     type: "rss"
     url: "https://www.reddit.com/r/technology/.rss"
@@ -113,9 +150,20 @@ sources:
   # - name: "GovTrack Bill Updates"
   #   type: "rss"
   #   url: "https://www.govtrack.us/events/events.rss?feeds=misc%3Aallbills"
-  - name: "ProPublica Congress"
+  # NOTE: 2026-10-28 공개 사이트 확인.
+  # 의회 전용 경로는 없었다.
+  #   https://www.propublica.org/topics/congress -> 404
+  #   https://www.propublica.org/feeds/propublica/congress -> 404
+  # 홈과 주제 페이지가 광고하는 정책 섹션 피드로 교체한다.
+  #   https://www.propublica.org/topics/regulation
+  #   link rel="alternate" title="ProPublica — Regulation Topic Feed"
+  #   href="https://www.propublica.org/topics/regulation/feed" (RSS 200)
+  # 정치 주제 피드(https://www.propublica.org/topics/politics/feed)도 RSS 200이나
+  # 소스 이름이 가리키던 의회/정책 범위에는 regulation 주제가 더 가깝다.
+  # robots.txt User-agent: * / Disallow: (빈 값) 이라 수집을 막지 않는다.
+  - name: "ProPublica Regulation"
     type: "rss"
-    url: "https://www.propublica.org/feeds/propublica/main"
+    url: "https://www.propublica.org/topics/regulation/feed"
   - name: "Senate Floor Activity"
     type: "rss"
     url: "https://www.senate.gov/legislative/LIS/floor_activity/floor_activity.rss"
@@ -261,22 +309,24 @@ entities:
     display_name: "규제/법률"
     keywords:
       # English keywords
+      # 2026-10-28: act, federal, law, house, senate 단독어는 구 단위로 바꿨다.
+      # 이 엔티티에는 "white house" 키가 없었다.
       - "policy"
       - "government"
-      - "federal"
+      - "federal register"
       - "agency"
       - "commission"
-      - "law"
+      - "public law"
       - "legislation"
       - "legislative"
       - "bill"
-      - "act"
+      - "privacy act"
       - "rule"
       - "rulemaking"
       - "executive order"
       - "congress"
-      - "senate"
-      - "house"
+      - "senate committee"
+      - "house of representatives"
       - "guidance"
       - "enforcement"
       - "regulation"
@@ -411,7 +461,7 @@ entities:
     keywords:
       # Major platforms - English
       - "google"
-      - "apple"
+      - "apple app store"
       - "meta"
       - "amazon"
       - "microsoft"
@@ -501,13 +551,14 @@ entities:
     display_name: "입법"
     keywords:
       # English keywords
+      # 2026-10-28: act, house, senate 단독어는 구 단위로 바꿨다.
       - "legislation"
       - "legislative"
       - "bill"
-      - "act"
+      - "privacy act"
       - "congress"
-      - "senate"
-      - "house"
+      - "senate committee"
+      - "house of representatives"
       - "parliament"
       - "lawmaker"
       - "bipartisan"

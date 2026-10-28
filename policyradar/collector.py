@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import html
 import os
+import re
 import threading
 import time
 from collections.abc import Mapping
@@ -15,6 +16,7 @@ from urllib.parse import urlparse
 import feedparser
 import requests
 import structlog
+from bs4 import BeautifulSoup
 from pybreaker import CircuitBreakerError
 from radar_core import AdaptiveThrottler, CrawlHealthStore
 from requests.adapters import HTTPAdapter
@@ -36,25 +38,55 @@ _DEFAULT_HEALTH_DB_PATH = "data/radar_data.duckdb"
 _COLLECTION_CONTROL_LOCK = threading.Lock()
 _ACTIVE_THROTTLER: AdaptiveThrottler | None = None
 _ACTIVE_HEALTH_STORE: CrawlHealthStore | None = None
+_ACTIVE_RATE_LIMITERS: dict[str, RateLimiter] | None = None
+_GOVINFO_BODY_SOURCES = frozenset({"GovInfo Bills", "GovInfo Public and Private Laws"})
+_GOVINFO_HTML_URL_RE = re.compile(
+    r"https://www\.govinfo\.gov/content/pkg/[A-Za-z0-9._-]+/html/[A-Za-z0-9._-]+\.htm",
+    re.IGNORECASE,
+)
+_SUMMARY_BODY_CHARS = 1000
+_CHALLENGE_MARKERS = (
+    "just a moment",
+    "cf-browser-verification",
+    "cf-challenge",
+    "challenge-platform",
+    "attention required",
+    "checking your browser",
+    "enable javascript and cookies",
+)
 
 
-def _set_collection_controls(throttler: AdaptiveThrottler, health_store: CrawlHealthStore) -> None:
-    global _ACTIVE_THROTTLER, _ACTIVE_HEALTH_STORE
+def _set_collection_controls(
+    throttler: AdaptiveThrottler,
+    health_store: CrawlHealthStore,
+    rate_limiters: dict[str, RateLimiter] | None = None,
+) -> None:
+    global _ACTIVE_THROTTLER, _ACTIVE_HEALTH_STORE, _ACTIVE_RATE_LIMITERS
     with _COLLECTION_CONTROL_LOCK:
         _ACTIVE_THROTTLER = throttler
         _ACTIVE_HEALTH_STORE = health_store
+        _ACTIVE_RATE_LIMITERS = rate_limiters
 
 
 def _clear_collection_controls() -> None:
-    global _ACTIVE_THROTTLER, _ACTIVE_HEALTH_STORE
+    global _ACTIVE_THROTTLER, _ACTIVE_HEALTH_STORE, _ACTIVE_RATE_LIMITERS
     with _COLLECTION_CONTROL_LOCK:
         _ACTIVE_THROTTLER = None
         _ACTIVE_HEALTH_STORE = None
+        _ACTIVE_RATE_LIMITERS = None
 
 
 def _get_collection_controls() -> tuple[AdaptiveThrottler | None, CrawlHealthStore | None]:
     with _COLLECTION_CONTROL_LOCK:
         return _ACTIVE_THROTTLER, _ACTIVE_HEALTH_STORE
+
+
+def _rate_limiter_for_host(host: str) -> RateLimiter | None:
+    with _COLLECTION_CONTROL_LOCK:
+        limiters = _ACTIVE_RATE_LIMITERS
+    if limiters is None:
+        return None
+    return limiters.get(host.lower())
 
 
 class RateLimiter:
@@ -204,7 +236,7 @@ def collect_sources(
     )
     # An LFS pointer is not a database. Keep the pointer and open the writable copy.
     health_store = CrawlHealthStore(str(resolve_writable_database(configured_health_db)))
-    _set_collection_controls(throttler, health_store)
+    _set_collection_controls(throttler, health_store, rate_limiters)
     session = _create_session()
 
     def _collect_for_source(source: Source) -> tuple[list[Article], list[str]]:
@@ -364,6 +396,8 @@ def _collect_single(
 
             title = html.unescape(_entry_text(entry, "title").strip()) or "(no title)"
             link = _entry_text(entry, "link").strip()
+            summary_text = html.unescape(summary.strip())
+            summary_text = _maybe_replace_govinfo_summary(source, summary_text, timeout=timeout)
 
             # Skip entries with invalid link format
             if link and not link.startswith(("http://", "https://")):
@@ -374,11 +408,19 @@ def _collect_single(
                 )
                 continue
 
+            if not _passes_include_keywords(source, title, summary_text):
+                logger.info(
+                    "skipped_include_keywords",
+                    source=source.name,
+                    title=title[:120],
+                )
+                continue
+
             items.append(
                 Article(
                     title=title,
                     link=link,
-                    summary=html.unescape(summary.strip()),
+                    summary=summary_text,
                     published=published,
                     source=source.name,
                     category=category,
@@ -412,6 +454,133 @@ def _collect_single(
         raise
     except Exception as exc:
         raise ParseError(f"Failed to parse feed from {source.name}: {exc}") from exc
+
+
+def _include_keywords(source: Source) -> list[str] | None:
+    """Return the source keyword gate, or None when the field is absent."""
+    config = source.config
+    if not isinstance(config, dict) or "include_keywords" not in config:
+        return None
+    raw = config.get("include_keywords")
+    if not isinstance(raw, list):
+        return None
+    keywords: list[str] = []
+    for item in raw:
+        if isinstance(item, str):
+            text = item.strip()
+            if text:
+                keywords.append(text)
+    return keywords
+
+
+def _passes_include_keywords(source: Source, title: str, summary: str) -> bool:
+    """Keep the item when no gate is configured or any keyword hits.
+
+    Matching is case-insensitive and uses word boundaries so a short keyword
+    such as ``bill`` does not match ``billion``.
+    """
+    keywords = _include_keywords(source)
+    if keywords is None:
+        return True
+    return _text_has_any_keyword(title, summary, keywords)
+
+
+def _text_has_any_keyword(title: str, summary: str, keywords: list[str]) -> bool:
+    if not keywords:
+        return False
+    haystack = f"{title}\n{summary}"
+    for keyword in keywords:
+        pattern = re.compile(rf"\b{re.escape(keyword)}\b", re.IGNORECASE)
+        if pattern.search(haystack):
+            return True
+    return False
+
+
+def _extract_govinfo_html_url(summary: str) -> str | None:
+    match = _GOVINFO_HTML_URL_RE.search(summary)
+    if match is None:
+        return None
+    return match.group(0)
+
+
+def _parse_html_text(raw_html: str, *, limit: int = _SUMMARY_BODY_CHARS) -> str:
+    """Drop tags and scripts, then keep the leading plain text."""
+    soup = BeautifulSoup(raw_html, "html.parser")
+    for tag in soup(["script", "style", "noscript"]):
+        tag.decompose()
+    text = soup.get_text(separator=" ", strip=True)
+    collapsed = re.sub(r"\s+", " ", text).strip()
+    return collapsed[:limit]
+
+
+def _body_is_challenge(body: str) -> bool:
+    sample = body[:8000].lower()
+    return any(marker in sample for marker in _CHALLENGE_MARKERS)
+
+
+def _fetch_govinfo_html(
+    url: str,
+    *,
+    timeout: int,
+    rate_limiter: RateLimiter | None,
+) -> str | None:
+    """GET a public GovInfo HTML file. None means keep the original summary."""
+    limiter = (
+        rate_limiter if rate_limiter is not None else _rate_limiter_for_host(urlparse(url).netloc)
+    )
+    if limiter is not None:
+        limiter.acquire()
+    try:
+        response = requests.get(url, timeout=timeout, headers=_DEFAULT_HEADERS)
+    except (requests.exceptions.Timeout, requests.exceptions.ConnectionError):
+        logger.info("govinfo_html_skipped", url=url, reason="timeout_or_connection")
+        return None
+    except requests.exceptions.RequestException as exc:
+        logger.info("govinfo_html_skipped", url=url, reason=type(exc).__name__)
+        return None
+
+    body = response.text or ""
+    if response.status_code == 403 or _body_is_challenge(body):
+        logger.info(
+            "govinfo_html_skipped",
+            url=url,
+            reason="forbidden_or_challenge",
+            status_code=response.status_code,
+        )
+        return None
+    if response.status_code != 200:
+        logger.info(
+            "govinfo_html_skipped", url=url, reason="http_status", status_code=response.status_code
+        )
+        return None
+
+    text = _parse_html_text(body)
+    if not text:
+        logger.info("govinfo_html_skipped", url=url, reason="empty_body")
+        return None
+    return text
+
+
+def _maybe_replace_govinfo_summary(
+    source: Source,
+    summary: str,
+    *,
+    timeout: int,
+    rate_limiter: RateLimiter | None = None,
+) -> str:
+    """Replace Bills/Laws link-list summaries with the public HTML text.
+
+    A 403, interstitial challenge, or timeout leaves the RSS summary in place.
+    """
+    if source.name not in _GOVINFO_BODY_SOURCES:
+        return summary
+    html_url = _extract_govinfo_html_url(summary)
+    if html_url is None:
+        return summary
+    replacement = _fetch_govinfo_html(html_url, timeout=timeout, rate_limiter=rate_limiter)
+    if replacement is None:
+        return summary
+    return replacement
 
 
 def _extract_datetime(entry: Mapping[str, Any]) -> datetime | None:

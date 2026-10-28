@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 import yaml
 
@@ -107,13 +107,34 @@ def load_category_config(category_name: str, categories_dir: Path | None = None)
     )
 
 
+def _optional_keywords(entry: dict[str, object], key: str) -> list[str] | None:
+    """Parse a source keyword list. Missing field stays unset (gate open)."""
+    if key not in entry:
+        return None
+    raw = entry[key]
+    if not isinstance(raw, list):
+        return None
+    keywords: list[str] = []
+    for item in cast(list[object], raw):
+        if isinstance(item, str):
+            text = item.strip()
+            if text:
+                keywords.append(text)
+    return keywords
+
+
 def _parse_source(entry: dict[str, object]) -> Source:
     if not entry:
         raise ValueError("Empty source entry in category config")
+    config: dict[str, Any] = {}
+    include_keywords = _optional_keywords(entry, "include_keywords")
+    if include_keywords is not None:
+        config["include_keywords"] = include_keywords
     return Source(
         name=_string_value(entry, "name", "Unnamed Source"),
         type=_string_value(entry, "type", "rss"),
         url=_string_value(entry, "url", ""),
+        config=config,
     )
 
 
