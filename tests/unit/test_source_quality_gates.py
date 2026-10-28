@@ -279,10 +279,10 @@ entities: []
         propublica = by_name["ProPublica Regulation"]
         assert propublica.url == "https://www.propublica.org/topics/regulation/feed"
 
-        for source_name in ("TechCrunch Policy", "The Verge", "The Hill"):
-            assert by_name[source_name].config["include_keywords"] == _POLICY_KEYWORDS
+        # 분류 참고 기준에서 잘못 지운 비율이 10%를 넘겨 게이트를 적용하지 않는다.
+        for source_name in ("TechCrunch Policy", "The Verge", "The Hill", "EFF Updates"):
+            assert "include_keywords" not in by_name[source_name].config
         assert by_name["TechCrunch Policy"].url == "https://techcrunch.com/feed/"
-        assert "include_keywords" not in by_name["EFF Updates"].config
 
         entities = {
             entity.name: [keyword.lower() for keyword in entity.keywords]
@@ -304,12 +304,11 @@ entities: []
         assert "white house" in entities["ExecutiveOrder"]
 
 
-def test_policy_yaml_anchor_round_trip() -> None:
+def test_news_sources_are_not_keyword_gated() -> None:
     loaded = load_category_config("policy")
-    verge = next(source for source in loaded.sources if source.name == "The Verge")
-    hill = next(source for source in loaded.sources if source.name == "The Hill")
-    assert verge.config["include_keywords"] == hill.config["include_keywords"]
-    assert len(verge.config["include_keywords"]) == 14
+    for source_name in ("TechCrunch Policy", "The Verge", "The Hill"):
+        source = next(item for item in loaded.sources if item.name == source_name)
+        assert "include_keywords" not in source.config
 
 
 @pytest.mark.parametrize(

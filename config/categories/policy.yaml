@@ -50,43 +50,28 @@ source_backlog:
       name: Platform terms/privacy change trackers
       activation_gate: source authority review and effective-date extraction.
 
-# include_keywords: 제목과 요약에 키워드가 하나도 없으면 건너뛴다. 필드가 없으면 통과.
-# 대소문자는 구분하지 않고, 짧은 토큰이 다른 단어에 끼지 않도록 단어 경계로 맞춘다.
+# TechCrunch Policy, The Verge, The Hill에는 include_keywords를 두지 않는다.
+# 2026-10-22~27 분류 결과(참고 기준)와 URL로 맞추면, 초기 키워드가
+# 모델이 noise=false로 본 항목을 소스 건수의 50~78% 지웠다.
+# 제목에 나온 정책 구를 보강해도 잘못 지운 비율이 10% 아래가 되지 않았다.
+# 필드가 없으면 게이트는 항목을 통과시킨다.
 # TechCrunch Policy URL은 사이트 전체 피드(techcrunch.com/feed/)다.
 # 정책 카테고리로 바꾸는 후보(2026-10-28 공개 확인, HTTP 200 RSS):
 #   https://techcrunch.com/category/government-policy/feed/
 #   채널 제목 "Tech Policy & Government | TechCrunch"
-# 이번 변경에서는 URL을 유지하고 include_keywords만 적용한다.
 sources:
   - name: "TechCrunch Policy"
     type: "rss"
     url: "https://techcrunch.com/feed/"
-    include_keywords: &policy_include_keywords
-      - "privacy"
-      - "regulation"
-      - "regulator"
-      - "antitrust"
-      - "FTC"
-      - "FCC"
-      - "SEC"
-      - "bill"
-      - "law"
-      - "lawsuit"
-      - "ruling"
-      - "executive order"
-      - "AI policy"
-      - "terms of service"
   - name: "The Verge"
     type: "rss"
     url: "https://www.theverge.com/rss/index.xml"
-    include_keywords: *policy_include_keywords
   - name: "EFF Updates"
     type: "rss"
     url: "https://www.eff.org/rss/updates.xml"
   - name: "The Hill"
     type: "rss"
     url: "https://thehill.com/feed/"
-    include_keywords: *policy_include_keywords
   - name: "White House Presidential Actions"
     type: "rss"
     url: "https://www.whitehouse.gov/presidential-actions/feed/"
