@@ -9,6 +9,7 @@ on:
       - 'pyproject.toml'
       - '.github/workflows/pr-checks.yml'
       - '.github/workflows/radar-crawler.yml'
+      - '.github/workflows/**'
 
 permissions:
   contents: read
