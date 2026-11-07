@@ -1,52 +1,52 @@
 {
   "date": "2026-11-07",
   "category": "policy",
-  "article_count": 124,
+  "article_count": 122,
   "source_count": 8,
-  "matched_count": 124,
+  "matched_count": 122,
   "top_entities": [
     {
       "name": "Regulation",
-      "count": 91
-    },
-    {
-      "name": "Legislation",
-      "count": 72
+      "count": 61
     },
     {
       "name": "ConsumerRights",
-      "count": 53
+      "count": 57
     },
     {
       "name": "Platform",
-      "count": 39
+      "count": 45
+    },
+    {
+      "name": "Legislation",
+      "count": 45
     },
     {
       "name": "ExecutiveOrder",
-      "count": 27
+      "count": 36
     },
     {
       "name": "JudicialRuling",
-      "count": 23
+      "count": 33
     },
     {
       "name": "Privacy",
-      "count": 9
-    },
-    {
-      "name": "LaborPolicy",
-      "count": 4
-    },
-    {
-      "name": "FinancialRegulation",
-      "count": 3
+      "count": 14
     },
     {
       "name": "AIPolicy",
+      "count": 6
+    },
+    {
+      "name": "LaborPolicy",
       "count": 3
     },
     {
       "name": "EnvironmentalPolicy",
+      "count": 2
+    },
+    {
+      "name": "FinancialRegulation",
       "count": 2
     },
     {
@@ -55,14 +55,14 @@
     }
   ],
   "sources": {
-    "The Hill": 48,
-    "UK Parliament Bills": 25,
-    "Reddit r/technology (Tech Policy)": 20,
-    "The Verge": 11,
-    "TechCrunch Policy": 15,
-    "EFF Updates": 3,
+    "The Hill": 62,
+    "The Verge": 15,
+    "Reddit r/technology (Tech Policy)": 19,
+    "TechCrunch Policy": 13,
+    "EFF Updates": 6,
+    "UK Parliament Bills": 5,
     "White House Presidential Actions": 1,
     "FDA News Releases": 1
   },
-  "generated_at": "2026-11-06T15:11:07.972772+00:00"
+  "generated_at": "2026-11-07T14:09:39.123706+00:00"
 }
