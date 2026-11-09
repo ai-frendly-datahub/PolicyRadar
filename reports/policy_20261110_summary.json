@@ -1,0 +1,57 @@
+{
+  "date": "2026-11-10",
+  "category": "policy",
+  "article_count": 96,
+  "source_count": 5,
+  "matched_count": 96,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 43
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 35
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 30
+    },
+    {
+      "name": "Legislation",
+      "count": 26
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 21
+    },
+    {
+      "name": "Platform",
+      "count": 12
+    },
+    {
+      "name": "AIPolicy",
+      "count": 4
+    },
+    {
+      "name": "FinancialRegulation",
+      "count": 2
+    },
+    {
+      "name": "EnvironmentalPolicy",
+      "count": 1
+    },
+    {
+      "name": "Privacy",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "UK Parliament Bills": 6,
+    "The Hill": 62,
+    "The Verge": 5,
+    "TechCrunch Policy": 7,
+    "Reddit r/technology (Tech Policy)": 16
+  },
+  "generated_at": "2026-11-09T17:38:51.466168+00:00"
+}
