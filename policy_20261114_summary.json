@@ -1,63 +1,70 @@
 {
   "date": "2026-11-14",
   "category": "policy",
-  "article_count": 127,
-  "source_count": 7,
-  "matched_count": 127,
+  "article_count": 126,
+  "source_count": 10,
+  "matched_count": 126,
   "top_entities": [
     {
       "name": "Regulation",
-      "count": 147
+      "count": 131
     },
     {
       "name": "Legislation",
-      "count": 120
+      "count": 118
     },
     {
       "name": "ConsumerRights",
-      "count": 61
-    },
-    {
-      "name": "Platform",
-      "count": 24
+      "count": 60
     },
     {
       "name": "ExecutiveOrder",
-      "count": 23
+      "count": 34
+    },
+    {
+      "name": "Platform",
+      "count": 26
     },
     {
       "name": "FinancialRegulation",
-      "count": 18
+      "count": 19
     },
     {
       "name": "JudicialRuling",
-      "count": 9
+      "count": 13
     },
     {
       "name": "Privacy",
       "count": 7
     },
     {
-      "name": "LaborPolicy",
-      "count": 2
-    },
-    {
       "name": "TermsChange",
-      "count": 1
+      "count": 5
     },
     {
       "name": "EnvironmentalPolicy",
+      "count": 2
+    },
+    {
+      "name": "AIPolicy",
+      "count": 1
+    },
+    {
+      "name": "LaborPolicy",
       "count": 1
     }
   ],
   "sources": {
-    "The Verge": 10,
-    "The Hill": 48,
-    "TechCrunch Policy": 13,
-    "UK Parliament Bills": 19,
-    "Reddit r/technology (Tech Policy)": 15,
+    "The Verge": 12,
+    "The Hill": 59,
+    "Reddit r/technology (Tech Policy)": 14,
+    "TechCrunch Policy": 7,
+    "EFF Updates": 1,
+    "UK Parliament Bills": 9,
+    "SEC Speeches": 1,
+    "SEC Press Releases": 1,
     "GovInfo Bills": 21,
     "White House Presidential Actions": 1
   },
-  "generated_at": "2026-11-13T15:29:35.750386+00:00"
+  "generated_at": "2026-11-14T14:17:05.134844+00:00"
 }
