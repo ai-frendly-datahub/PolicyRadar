@@ -1,0 +1,64 @@
+{
+  "date": "2026-11-25",
+  "category": "policy",
+  "article_count": 144,
+  "source_count": 8,
+  "matched_count": 144,
+  "top_entities": [
+    {
+      "name": "Regulation",
+      "count": 110
+    },
+    {
+      "name": "Legislation",
+      "count": 92
+    },
+    {
+      "name": "ConsumerRights",
+      "count": 64
+    },
+    {
+      "name": "ExecutiveOrder",
+      "count": 32
+    },
+    {
+      "name": "JudicialRuling",
+      "count": 15
+    },
+    {
+      "name": "Platform",
+      "count": 12
+    },
+    {
+      "name": "FinancialRegulation",
+      "count": 7
+    },
+    {
+      "name": "LaborPolicy",
+      "count": 6
+    },
+    {
+      "name": "Privacy",
+      "count": 4
+    },
+    {
+      "name": "AIPolicy",
+      "count": 3
+    },
+    {
+      "name": "EnvironmentalPolicy",
+      "count": 3
+    }
+  ],
+  "sources": {
+    "The Hill": 72,
+    "UK Parliament Bills": 22,
+    "The Verge": 10,
+    "TechCrunch Policy": 21,
+    "GovInfo Bills": 16,
+    "CFPB Newsroom": 1,
+    "White House Presidential Actions": 1,
+    "FDA News Releases": 1
+  },
+  "generated_at": "2026-11-24T18:58:11.560406+00:00"
+}
